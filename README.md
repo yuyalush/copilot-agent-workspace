@@ -138,3 +138,12 @@ description: 'このスキルの説明（10-1024文字）'
 - [ ] Phase 2: コード生成 & レビュー支援
 - [ ] Phase 3: Azure / クラウド開発支援
 - [ ] Phase 4: CI/CD & テスト自動化
+
+---
+
+## 依存ライブラリ
+
+| ライブラリ | 用途 | ライセンス |
+|-----------|------|-----------|
+| [python-pptx](https://github.com/scanny/python-pptx) | SVG → PPTX 変換（`svg2pptx.py`） | MIT |
+| [lxml](https://github.com/lxml/lxml) | SVG の XML パース | BSD |
