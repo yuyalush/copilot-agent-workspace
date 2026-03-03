@@ -105,27 +105,10 @@ jobs:
         run: |
           echo "🤖 Running Copilot Agent Mode..."
           echo ""
-
-          # 方法1: copilot コマンド（Copilot Coding Agent CLI）
-          if command -v copilot &> /dev/null; then
-            echo "✅ copilot CLI found"
-            copilot -p "${{ inputs.prompt }}" --allow-all 2>&1
-          # 方法2: gh copilot の agent サブコマンド
-          elif gh copilot agent --help &> /dev/null 2>&1; then
-            echo "✅ gh copilot agent subcommand found"
-            gh copilot agent -p "${{ inputs.prompt }}" --allow-all 2>&1
-          else
-            echo "❌ Agent mode CLI が見つかりません"
-            echo ""
-            echo "💡 利用可能なコマンド:"
-            which copilot 2>/dev/null || echo "  copilot: not found"
-            gh copilot --help 2>/dev/null || echo "  gh copilot: help unavailable"
-            echo ""
-            echo "💡 代替案:"
-            echo "  - GitHub Copilot Coding Agent（Issue ベース）を使う"
-            echo "  - GitHub Actions 上で直接 Azure OpenAI API を呼ぶ"
-            exit 1
-          fi
+          echo "📍 Which copilot: $(which copilot 2>/dev/null || echo 'not in PATH')"
+          echo "📍 Copilot version: $(copilot --version 2>/dev/null || echo 'unknown')"
+          echo ""
+          copilot -p "${{ inputs.prompt }}" --allow-all 2>&1
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
