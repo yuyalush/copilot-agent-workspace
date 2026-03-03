@@ -416,6 +416,20 @@ def _strip_tag(tag_str: str) -> str:
     return tag_str
 
 
+def parse_translate(elem) -> tuple[float, float]:
+    """transform="translate(x, y)" から (dx, dy) を抽出する"""
+    transform = elem.get("transform", "")
+    # translate(x, y) — カンマ/スペース区切りの2引数
+    m = re.search(r'translate\(\s*([\d.eE+-]+)[\s,]+([\d.eE+-]+)\s*\)', transform)
+    if m:
+        return float(m.group(1)), float(m.group(2))
+    # translate(x) — y 省略時は 0
+    m = re.search(r'translate\(\s*([\d.eE+-]+)\s*\)', transform)
+    if m:
+        return float(m.group(1)), 0.0
+    return 0.0, 0.0
+
+
 def collect_text_content(elem, href: str | None = None):
     """<text> 要素の直接テキストと <tspan> / <a> 子要素のテキストを収集"""
     texts = []
@@ -555,10 +569,10 @@ def set_rounded_rect_radius(shape, rx_px: float, width_px: float, height_px: flo
         pass
 
 
-def add_rect(slide, elem, inherited_opacity: float = 1.0, gradients: dict | None = None):
+def add_rect(slide, elem, inherited_opacity: float = 1.0, gradients: dict | None = None, offset_x: float = 0.0, offset_y: float = 0.0):
     """<rect> → AutoShape (Rectangle or Rounded Rectangle)"""
-    x = px(get_attr(elem, "x", "0"))
-    y = px(get_attr(elem, "y", "0"))
+    x = px(float(get_attr(elem, "x", "0")) + offset_x)
+    y = px(float(get_attr(elem, "y", "0")) + offset_y)
     w = px(get_attr(elem, "width", "0"))
     h = px(get_attr(elem, "height", "0"))
     rx = get_attr(elem, "rx")
@@ -616,10 +630,10 @@ def add_rect(slide, elem, inherited_opacity: float = 1.0, gradients: dict | None
     return shape
 
 
-def add_text(slide, elem, href: str | None = None):
+def add_text(slide, elem, href: str | None = None, offset_x: float = 0.0, offset_y: float = 0.0):
     """<text> → TextBox（改良版: CJK幅推定・ベースライン補正・マージン除去・ハイパーリンク対応）"""
-    x_val = float(get_attr(elem, "x", "0"))
-    y_val = float(get_attr(elem, "y", "0"))
+    x_val = float(get_attr(elem, "x", "0")) + offset_x
+    y_val = float(get_attr(elem, "y", "0")) + offset_y
     text_anchor = get_attr(elem, "text-anchor", "start")
 
     texts = collect_text_content(elem, href=href)
@@ -707,10 +721,10 @@ def add_text(slide, elem, href: str | None = None):
     return txBox
 
 
-def add_circle(slide, elem, inherited_opacity: float = 1.0, gradients: dict | None = None):
+def add_circle(slide, elem, inherited_opacity: float = 1.0, gradients: dict | None = None, offset_x: float = 0.0, offset_y: float = 0.0):
     """<circle> → Oval AutoShape"""
-    cx = float(get_attr(elem, "cx", "0"))
-    cy = float(get_attr(elem, "cy", "0"))
+    cx = float(get_attr(elem, "cx", "0")) + offset_x
+    cy = float(get_attr(elem, "cy", "0")) + offset_y
     r = float(get_attr(elem, "r", "0"))
 
     shape = slide.shapes.add_shape(
@@ -750,10 +764,10 @@ def add_circle(slide, elem, inherited_opacity: float = 1.0, gradients: dict | No
     return shape
 
 
-def add_ellipse(slide, elem, inherited_opacity: float = 1.0, gradients: dict | None = None):
+def add_ellipse(slide, elem, inherited_opacity: float = 1.0, gradients: dict | None = None, offset_x: float = 0.0, offset_y: float = 0.0):
     """<ellipse> → Oval AutoShape"""
-    cx = float(get_attr(elem, "cx", "0"))
-    cy = float(get_attr(elem, "cy", "0"))
+    cx = float(get_attr(elem, "cx", "0")) + offset_x
+    cy = float(get_attr(elem, "cy", "0")) + offset_y
     rx = float(get_attr(elem, "rx", "0"))
     ry = float(get_attr(elem, "ry", "0"))
 
@@ -781,12 +795,12 @@ def add_ellipse(slide, elem, inherited_opacity: float = 1.0, gradients: dict | N
     return shape
 
 
-def add_line(slide, elem, inherited_opacity: float = 1.0):
+def add_line(slide, elem, inherited_opacity: float = 1.0, offset_x: float = 0.0, offset_y: float = 0.0):
     """<line> → Connector"""
-    x1 = px(get_attr(elem, "x1", "0"))
-    y1 = px(get_attr(elem, "y1", "0"))
-    x2 = px(get_attr(elem, "x2", "0"))
-    y2 = px(get_attr(elem, "y2", "0"))
+    x1 = px(float(get_attr(elem, "x1", "0")) + offset_x)
+    y1 = px(float(get_attr(elem, "y1", "0")) + offset_y)
+    x2 = px(float(get_attr(elem, "x2", "0")) + offset_x)
+    y2 = px(float(get_attr(elem, "y2", "0")) + offset_y)
 
     connector = slide.shapes.add_connector(
         1,  # MSO_CONNECTOR_TYPE.STRAIGHT
@@ -811,7 +825,7 @@ def add_line(slide, elem, inherited_opacity: float = 1.0):
     return connector
 
 
-def add_polygon(slide, elem, inherited_opacity: float = 1.0, gradients: dict | None = None):
+def add_polygon(slide, elem, inherited_opacity: float = 1.0, gradients: dict | None = None, offset_x: float = 0.0, offset_y: float = 0.0):
     """<polygon> → Freeform shape"""
     points_str = get_attr(elem, "points", "")
     if not points_str:
@@ -823,7 +837,7 @@ def add_polygon(slide, elem, inherited_opacity: float = 1.0, gradients: dict | N
     for pair in point_pairs:
         parts = pair.split(",")
         if len(parts) == 2:
-            points.append((float(parts[0]), float(parts[1])))
+            points.append((float(parts[0]) + offset_x, float(parts[1]) + offset_y))
 
     if len(points) < 3:
         return None
@@ -869,14 +883,18 @@ def add_polygon(slide, elem, inherited_opacity: float = 1.0, gradients: dict | N
     return shape
 
 
-def process_group(slide, group_elem, inherited_opacity: float = 1.0, gradients: dict | None = None):
-    """<g> 内の要素を再帰的に処理（グループの opacity を子要素に継承）"""
+def process_group(slide, group_elem, inherited_opacity: float = 1.0, gradients: dict | None = None, offset_x: float = 0.0, offset_y: float = 0.0):
+    """<g> 内の要素を再帰的に処理（グループの opacity・translate を子要素に継承）"""
     group_opacity = get_effective_opacity(group_elem, inherited_opacity)
+    # transform="translate(x, y)" のオフセットを累積
+    dx, dy = parse_translate(group_elem)
+    new_offset_x = offset_x + dx
+    new_offset_y = offset_y + dy
     for child in group_elem:
-        process_element(slide, child, group_opacity, gradients)
+        process_element(slide, child, group_opacity, gradients, new_offset_x, new_offset_y)
 
 
-def process_element(slide, elem, inherited_opacity: float = 1.0, gradients: dict | None = None):
+def process_element(slide, elem, inherited_opacity: float = 1.0, gradients: dict | None = None, offset_x: float = 0.0, offset_y: float = 0.0):
     """SVG 要素を対応する PPTX シェイプに変換"""
     tag = elem.tag
     # lxml ではコメント等で tag が callable になる場合がある
@@ -902,7 +920,7 @@ def process_element(slide, elem, inherited_opacity: float = 1.0, gradients: dict
     # line は gradients 不要
     if tag == "line":
         try:
-            add_line(slide, elem, inherited_opacity)
+            add_line(slide, elem, inherited_opacity, offset_x, offset_y)
         except Exception as e:
             print(f"  ⚠ {tag} 要素の変換をスキップ: {e}", file=sys.stderr)
         return
@@ -910,7 +928,7 @@ def process_element(slide, elem, inherited_opacity: float = 1.0, gradients: dict
     # テキストは opacity 未対応（テキスト自体の透過は稀）
     if tag == "text":
         try:
-            add_text(slide, elem)
+            add_text(slide, elem, offset_x=offset_x, offset_y=offset_y)
         except Exception as e:
             print(f"  ⚠ {tag} 要素の変換をスキップ: {e}", file=sys.stderr)
         return
@@ -923,17 +941,17 @@ def process_element(slide, elem, inherited_opacity: float = 1.0, gradients: dict
             if child_tag == "text":
                 try:
                     # collect_text_content に href を伝播
-                    add_text(slide, child, href=href)
+                    add_text(slide, child, href=href, offset_x=offset_x, offset_y=offset_y)
                 except Exception as e:
                     print(f"  ⚠ a>text 要素の変換をスキップ: {e}", file=sys.stderr)
             else:
-                process_element(slide, child, inherited_opacity, gradients)
+                process_element(slide, child, inherited_opacity, gradients, offset_x, offset_y)
         return
 
     handler = gradient_handlers.get(tag)
     if handler:
         try:
-            handler(slide, elem, inherited_opacity, gradients)
+            handler(slide, elem, inherited_opacity, gradients, offset_x, offset_y)
         except Exception as e:
             print(f"  ⚠ {tag} 要素の変換をスキップ: {e}", file=sys.stderr)
 

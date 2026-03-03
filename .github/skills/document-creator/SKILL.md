@@ -638,6 +638,53 @@ output/slides/2026-03-03_153210_ACA-ネットワーク/   ← 2回目（15:32:10
 - ファイル名は `slide01.svg`, `slide02.svg`, ... の連番
 - **ハイパーリンク** — 情報源の URL を `<a>` タグで埋め込む（PPTX でクリック可能になる）
 
+### 🚫 禁止カラー（絶対に使わない）
+
+以下の Azure ブランドカラーは**絶対に使用禁止**。トレーニングデータの影響で出力されがちだが、カスタムパレットのみを使うこと。
+
+| 色名 | Hex | 代わりに使う色 |
+|------|-----|---------------|
+| Azure Blue | `#0078D4` | `#1B2A4A`（Deep Navy）または `#00D4FF`（Cyan） |
+| Azure Light Blue | `#50E6FF` | `#00D4FF`（Bright Cyan） |
+| Azure Dark Blue | `#005A9E` | `#0D1B2A`（Deep Navy Dark） |
+| Azure Pale Blue | `#B4D6F5` | `#E0F7FA`（Light Cyan） |
+| Azure Green | `#107C10` | 使用しない |
+| Azure Yellow | `#FFB900` | `#F4A261`（Warm Accent Orange、必要時のみ） |
+| Azure Red | `#E81123` | `#E76F51`（Warm Accent Coral、必要時のみ） |
+| Azure Purple | `#8764B8` | 使用しない |
+
+**判定基準**: `#0078D4` や `#50E6FF` が SVG に含まれていたら**間違い**。必ず上記カスタムパレットの色に置き換える。
+
+### 🚫 SVG 構造の制約
+
+PPTX 変換の互換性と品質を保つため、以下のルールを厳守する。
+
+**座標の直接指定（必須）:**
+- 各要素（`<rect>`, `<text>`, `<circle>` 等）の座標は `x`, `y`, `cx`, `cy` 等の属性で**直接指定**する
+- `<g transform="translate(x, y)">` による間接オフセットは**避ける**（svg2pptx.py は対応しているが、デバッグしづらくなるため非推奨）
+
+**スタイル属性の直書き（推奨）:**
+- `style="fill: #0D1B2A; stroke: none"` ではなく、`fill="#0D1B2A" stroke="none"` のように属性として直接記述する
+- グラデーションの `<stop>` も `stop-color="#0D1B2A"` を属性で書く（`style="stop-color:..."` は避ける）
+
+**OK な例:**
+```xml
+<rect x="100" y="50" width="200" height="80" fill="url(#grad1)" rx="8"/>
+<text x="120" y="90" font-size="16" fill="#E0F7FA">テキスト</text>
+```
+
+**NG な例（避ける）:**
+```xml
+<!-- ❌ translate でオフセット -->
+<g transform="translate(100, 50)">
+  <rect x="0" y="0" width="200" height="80" fill="#0078D4"/>
+</g>
+<!-- ❌ style 属性に CSS を詰め込む -->
+<rect x="100" y="50" style="fill: #0078D4; width: 200px"/>
+<!-- ❌ Azure ブランドカラー -->
+<rect x="0" y="0" width="960" height="80" fill="#0078D4"/>
+```
+
 ### ハイパーリンクの記法
 
 各スライドに情報源（MS Learn 等）へのリンクを入れる場合、SVG の `<a>` タグを使う:
