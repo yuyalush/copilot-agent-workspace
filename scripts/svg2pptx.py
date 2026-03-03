@@ -996,31 +996,34 @@ def _auto_pptx_name(inputs: list[str]) -> str:
     """入力パスからPPTXファイル名を自動生成する。
 
     フォルダ名が ``YYYY-MM-DD_HHmmss_テーマ名`` 形式の場合、
-    ``YYYY-MM-DD_テーマ名.pptx`` を返す（時分秒を省略）。
-    それ以外はフォルダ/ファイル名をそのまま使う。
+    ``<入力フォルダ>/YYYY-MM-DD_テーマ名.pptx`` を返す（時分秒を省略）。
+    それ以外はフォルダ/ファイル名をそのまま使い、入力フォルダ内に保存する。
     """
-    # 入力ディレクトリ名を特定
+    # 入力ディレクトリを特定
     p = Path(inputs[0]).resolve()
     if p.is_dir() or not p.suffix:
         # ディレクトリ指定（存在する or 拡張子なし = ディレクトリ風パス）
+        dir_path = p
         dir_name = p.name
     else:
-        # ファイル指定 → 親ディレクトリ名
+        # ファイル指定 → 親ディレクトリ
+        dir_path = p.parent
         dir_name = p.parent.name
 
     # YYYY-MM-DD_HHmmss_テーマ名 パターンにマッチ → 時分秒を省略
     m = re.match(r"^(\d{4}-\d{2}-\d{2})_\d{6}_(.+)$", dir_name)
     if m:
-        return f"{m.group(1)}_{m.group(2)}.pptx"
+        pptx_name = f"{m.group(1)}_{m.group(2)}.pptx"
+        return str(dir_path / pptx_name)
 
     # YYYY-MM-DD_テーマ名（HHmmss なし）パターン
     m2 = re.match(r"^(\d{4}-\d{2}-\d{2})_(.+)$", dir_name)
     if m2:
-        return f"{dir_name}.pptx"
+        return str(dir_path / f"{dir_name}.pptx")
 
     # パターン不一致 → フォルダ名をそのまま使う
     if dir_name:
-        return f"{dir_name}.pptx"
+        return str(dir_path / f"{dir_name}.pptx")
 
     return "output.pptx"
 
