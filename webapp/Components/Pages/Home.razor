@@ -285,12 +285,21 @@
         isHistoryLoading = true;
         StateHasChanged();
 
-        var historyTask = BlobStorage.ListAllPptxAsync();
-        var inProgressTask = GitHub.GetInProgressRunsAsync();
-        await Task.WhenAll(historyTask, inProgressTask);
+        try
+        {
+            var historyTask = BlobStorage.ListAllPptxAsync();
+            var inProgressTask = GitHub.GetInProgressRunsAsync();
+            await Task.WhenAll(historyTask, inProgressTask);
 
-        historyFiles = historyTask.Result;
-        inProgressRuns = inProgressTask.Result;
+            historyFiles = historyTask.Result;
+            inProgressRuns = inProgressTask.Result;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"RefreshHistory error: {ex.Message}");
+            historyFiles ??= new();
+            inProgressRuns ??= new();
+        }
 
         isHistoryLoading = false;
         StateHasChanged();

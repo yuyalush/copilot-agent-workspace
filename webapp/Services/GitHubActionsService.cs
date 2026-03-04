@@ -85,23 +85,49 @@ public class GitHubActionsService
         var result = new List<InProgressRunInfo>();
         try
         {
-            var runs = await GetRecentRunsAsync(20);
-            foreach (var run in runs)
+            // 未完了ステータスをサーバー側でフィルタして取得（より確実）
+            var statusFilters = new CheckRunStatusFilter[]
             {
-                var status = run.Status.StringValue;
-                if (status == "in_progress" || status == "queued")
+                CheckRunStatusFilter.InProgress,
+                CheckRunStatusFilter.Queued
+            };
+
+            foreach (var statusFilter in statusFilters)
+            {
+                try
                 {
-                    result.Add(new InProgressRunInfo
+                    var request = new WorkflowRunsRequest { Status = statusFilter };
+                    var response = await _client.Actions.Workflows.Runs.ListByWorkflow(
+                        _owner, _repo, _workflowFileName, request,
+                        new ApiOptions { PageSize = 10, PageCount = 1 });
+
+                    foreach (var run in response.WorkflowRuns)
                     {
-                        RunNumber = (int)run.RunNumber,
-                        RunId = run.Id,
-                        Status = status,
-                        Prompt = run.DisplayTitle ?? run.Name ?? "",
-                        CreatedAt = run.CreatedAt,
-                        HtmlUrl = run.HtmlUrl
-                    });
+                        var status = run.Status.StringValue;
+                        _logger.LogInformation(
+                            "In-progress run found: #{RunId} status={Status} title={Title}",
+                            run.Id, status, run.DisplayTitle);
+
+                        result.Add(new InProgressRunInfo
+                        {
+                            RunNumber = (int)run.RunNumber,
+                            RunId = run.Id,
+                            Status = status,
+                            Prompt = run.DisplayTitle ?? run.Name ?? "",
+                            CreatedAt = run.CreatedAt,
+                            HtmlUrl = run.HtmlUrl
+                        });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to fetch runs with status filter");
                 }
             }
+
+            // 重複を除去
+            result = result.DistinctBy(r => r.RunId).OrderByDescending(r => r.CreatedAt).ToList();
+            _logger.LogInformation("GetInProgressRunsAsync: found {Count} in-progress/queued runs", result.Count);
         }
         catch (Exception ex)
         {
