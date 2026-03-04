@@ -150,8 +150,11 @@
     private string statusCss = "alert-info";
 
     private const string placeholderText =
+        "例: Azure の ○○ について提案書を PPTX で作成して\n" +
         "例: Azure Cosmos DB の概要を PPTX にまとめてください\n" +
-        "例: Azure Container Apps の VNET 構成について PPTX にまとめてください";
+        "例: Azure Container Apps の VNET 構成について PPTX にまとめてください\n" +
+        "例: Microsoft Foundry Models のデプロイ種別を比較表付きで PPTX にまとめて\n" +
+        "例: Foundry Agent Service について提案・プレゼン用に詳細な PPTX を作成して";
 
     private record PromptTemplate(string Name, string Prompt);
 
