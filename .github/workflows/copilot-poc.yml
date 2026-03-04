@@ -28,6 +28,14 @@ on:
           - claude-sonnet-4.6
           - gpt-5.2
           - o3
+      source:
+        description: 'トリガー元（github-ui / webapp）'
+        required: false
+        default: 'github-ui'
+        type: choice
+        options:
+          - github-ui
+          - webapp
 
 permissions:
   contents: read
@@ -122,7 +130,7 @@ jobs:
       # -------------------------------------------------------
       - name: Upload output artifacts
         uses: actions/upload-artifact@v4
-        if: always()
+        if: always() && inputs.source != 'webapp'
         with:
           name: copilot-output-${{ github.run_number }}
           path: output/

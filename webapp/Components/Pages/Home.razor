@@ -1,6 +1,8 @@
 ﻿@page "/"
 @using CopilotWebApp.Services
 @inject GitHubActionsService GitHub
+@inject BlobStorageService BlobStorage
+@inject IJSRuntime JS
 @rendermode InteractiveServer
 
 <PageTitle>Copilot Slide Generator</PageTitle>
@@ -16,7 +18,7 @@
                     <div class="mb-3">
                         <label for="prompt" class="form-label fw-bold">プロンプト</label>
                         <textarea @bind="prompt" id="prompt" class="form-control" rows="6"
-                                  placeholder="スライドのテーマを入力してください...&#10;例: Azure App Service の概要を5枚のスライドにまとめてください"></textarea>
+                                  placeholder="@placeholderText"></textarea>
                     </div>
 
                     <div class="mb-3">
@@ -61,9 +63,78 @@
                     @foreach (var tpl in templates)
                     {
                         <button class="list-group-item list-group-item-action" @onclick="() => ApplyTemplate(tpl)">
-                            <strong>@tpl.Name</strong>
-                            <br /><small class="text-muted">@tpl.Description</small>
+                            @tpl.Name
                         </button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PPTX 履歴テーブル -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">📚 作成履歴</h5>
+                    <button @onclick="RefreshHistory" class="btn btn-outline-primary btn-sm" disabled="@isHistoryLoading">
+                        @if (isHistoryLoading)
+                        {
+                            <span class="spinner-border spinner-border-sm me-1"></span>
+                        }
+                        🔄 更新
+                    </button>
+                </div>
+                <div class="card-body p-0">
+                    @if (historyFiles == null)
+                    {
+                        <div class="text-center py-4">
+                            <div class="spinner-border spinner-border-sm text-primary"></div>
+                            <span class="ms-2 text-muted">読み込み中...</span>
+                        </div>
+                    }
+                    else if (historyFiles.Count == 0)
+                    {
+                        <div class="text-muted text-center py-4">まだ PPTX ファイルがありません</div>
+                    }
+                    else
+                    {
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>作成日</th>
+                                    <th>ファイル名</th>
+                                    <th style="width:120px">ダウンロード</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var file in historyFiles)
+                                {
+                                    <tr>
+                                        <td class="text-nowrap">
+                                            @(file.LastModified.HasValue
+                                                ? file.LastModified.Value.LocalDateTime.ToString("yyyy-MM-dd HH:mm")
+                                                : "—")
+                                        </td>
+                                        <td>@file.FileName</td>
+                                        <td>
+                                            <button class="btn btn-primary btn-sm"
+                                                    @onclick="() => DownloadHistoryFile(file)"
+                                                    disabled="@(downloadingBlob == file.BlobName)">
+                                                @if (downloadingBlob == file.BlobName)
+                                                {
+                                                    <span class="spinner-border spinner-border-sm"></span>
+                                                }
+                                                else
+                                                {
+                                                    <span>⬇</span>
+                                                }
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
                     }
                 </div>
             </div>
@@ -78,18 +149,19 @@
     private string statusMessage = "";
     private string statusCss = "alert-info";
 
-    private record PromptTemplate(string Name, string Description, string Prompt);
+    private const string placeholderText =
+        "例: Azure Cosmos DB の概要を PPTX にまとめてください\n" +
+        "例: Azure Container Apps の VNET 構成について PPTX にまとめてください";
+
+    private record PromptTemplate(string Name, string Prompt);
 
     private readonly List<PromptTemplate> templates = new()
     {
         new("Azure App Service",
-            "主要機能・料金プラン・デプロイ方法",
             "Azure App Service の概要を PPTX でまとめてください。"),
         new("Azure Cosmos DB",
-            "グローバル分散・API モデル・整合性レベル",
             "Azure Cosmos DB の概要を PPTX でまとめてください。"),
         new("Azure Container Apps",
-            "コンテナ実行・スケーリング・ネットワーク構成",
             "Azure Container Apps の概要を PPTX でまとめてください。"),
     };
 
@@ -128,5 +200,48 @@
     private void ApplyTemplate(PromptTemplate tpl)
     {
         prompt = tpl.Prompt;
+    }
+
+    // --- 履歴テーブル ---
+    private List<PptxFileInfo>? historyFiles;
+    private bool isHistoryLoading = false;
+    private string? downloadingBlob;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshHistory();
+    }
+
+    private async Task RefreshHistory()
+    {
+        isHistoryLoading = true;
+        StateHasChanged();
+
+        historyFiles = await BlobStorage.ListAllPptxAsync();
+
+        isHistoryLoading = false;
+        StateHasChanged();
+    }
+
+    private async Task DownloadHistoryFile(PptxFileInfo file)
+    {
+        downloadingBlob = file.BlobName;
+        StateHasChanged();
+
+        try
+        {
+            var data = await BlobStorage.DownloadBlobAsync(file.BlobName);
+            if (data != null)
+            {
+                var base64 = Convert.ToBase64String(data);
+                var mimeType = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+                await JS.InvokeVoidAsync("downloadFile", file.FileName, base64, mimeType);
+            }
+        }
+        finally
+        {
+            downloadingBlob = null;
+            StateHasChanged();
+        }
     }
 }

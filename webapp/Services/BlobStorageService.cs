@@ -91,6 +91,51 @@ public class BlobStorageService
         }
         return false;
     }
+
+    /// <summary>
+    /// 全 run から PPTX ファイルを一覧取得する（新しい順）。
+    /// </summary>
+    public async Task<List<PptxFileInfo>> ListAllPptxAsync()
+    {
+        var files = new List<PptxFileInfo>();
+
+        try
+        {
+            await foreach (var blob in _container.GetBlobsAsync(BlobTraits.None, BlobStates.None, "runs/", CancellationToken.None))
+            {
+                if (!blob.Name.EndsWith(".pptx", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                // runs/{runNumber}/output/slides/.../*.pptx
+                var parts = blob.Name.Split('/');
+                int.TryParse(parts.Length > 1 ? parts[1] : "0", out var runNumber);
+
+                // ファイル名はパスの最後
+                var fileName = parts[^1];
+
+                // runs/{runNumber}/ 以降の相対パス
+                var prefixLen = $"runs/{runNumber}/".Length;
+                var relativePath = blob.Name.Length > prefixLen ? blob.Name[prefixLen..] : blob.Name;
+
+                files.Add(new PptxFileInfo
+                {
+                    BlobName = blob.Name,
+                    FileName = fileName,
+                    RelativePath = relativePath,
+                    RunNumber = runNumber,
+                    Size = blob.Properties.ContentLength ?? 0,
+                    LastModified = blob.Properties.LastModified
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to list all PPTX blobs");
+        }
+
+        // 新しい順にソート
+        return files.OrderByDescending(f => f.LastModified).ToList();
+    }
 }
 
 /// <summary>
@@ -100,6 +145,19 @@ public class BlobFileInfo
 {
     public string BlobName { get; set; } = string.Empty;
     public string FileName { get; set; } = string.Empty;
+    public long Size { get; set; }
+    public DateTimeOffset? LastModified { get; set; }
+}
+
+/// <summary>
+/// PPTX ファイルの情報（履歴用）。
+/// </summary>
+public class PptxFileInfo
+{
+    public string BlobName { get; set; } = string.Empty;
+    public string FileName { get; set; } = string.Empty;
+    public string RelativePath { get; set; } = string.Empty;
+    public int RunNumber { get; set; }
     public long Size { get; set; }
     public DateTimeOffset? LastModified { get; set; }
 }

@@ -1,0 +1,130 @@
+@page "/history"
+@using CopilotWebApp.Services
+@inject BlobStorageService BlobStorage
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+
+<PageTitle>PPTX 履歴</PageTitle>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>📚 PPTX 履歴</h3>
+        <button @onclick="Refresh" class="btn btn-outline-primary btn-sm" disabled="@isLoading">
+            @if (isLoading)
+            {
+                <span class="spinner-border spinner-border-sm me-1"></span>
+            }
+            🔄 更新
+        </button>
+    </div>
+
+    @if (files == null)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2 text-muted">読み込み中...</p>
+        </div>
+    }
+    else if (files.Count == 0)
+    {
+        <div class="alert alert-info">
+            PPTX ファイルがまだありません。<a href="/">プロンプト入力</a>からスライドを生成してください。
+        </div>
+    }
+    else
+    {
+        <p class="text-muted mb-3">全 @files.Count 件の PPTX ファイル（新しい順）</p>
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+            @foreach (var file in files)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h6 class="card-title mb-1">
+                                📊 @file.FileName
+                            </h6>
+                            <p class="card-text text-muted small mb-2">
+                                @file.RelativePath
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="badge bg-secondary me-1">Run #@file.RunNumber</span>
+                                    <small class="text-muted">@FormatSize(file.Size)</small>
+                                </div>
+                            </div>
+                            @if (file.LastModified.HasValue)
+                            {
+                                <small class="text-muted d-block mt-1">
+                                    🕐 @file.LastModified.Value.LocalDateTime.ToString("yyyy-MM-dd HH:mm")
+                                </small>
+                            }
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0">
+                            <button class="btn btn-primary btn-sm w-100"
+                                    @onclick="() => DownloadFile(file)"
+                                    disabled="@(downloadingBlobName == file.BlobName)">
+                                @if (downloadingBlobName == file.BlobName)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-1"></span>
+                                }
+                                ⬇ ダウンロード
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private List<PptxFileInfo>? files;
+    private bool isLoading = false;
+    private string? downloadingBlobName;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Refresh();
+    }
+
+    private async Task Refresh()
+    {
+        isLoading = true;
+        StateHasChanged();
+
+        files = await BlobStorage.ListAllPptxAsync();
+
+        isLoading = false;
+        StateHasChanged();
+    }
+
+    private async Task DownloadFile(PptxFileInfo file)
+    {
+        downloadingBlobName = file.BlobName;
+        StateHasChanged();
+
+        try
+        {
+            var data = await BlobStorage.DownloadBlobAsync(file.BlobName);
+            if (data != null)
+            {
+                var base64 = Convert.ToBase64String(data);
+                var mimeType = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+                await JS.InvokeVoidAsync("downloadFile", file.FileName, base64, mimeType);
+            }
+        }
+        finally
+        {
+            downloadingBlobName = null;
+            StateHasChanged();
+        }
+    }
+
+    private static string FormatSize(long bytes)
+    {
+        if (bytes >= 1024 * 1024) return $"{bytes / (1024.0 * 1024.0):F1} MB";
+        if (bytes >= 1024) return $"{bytes / 1024.0:F1} KB";
+        return $"{bytes} B";
+    }
+}
