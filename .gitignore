@@ -9,6 +9,14 @@ build/
 venv/
 *.egg
 
+# ===== .NET =====
+bin/
+obj/
+*.user
+*.suo
+*.userprefs
+nul
+
 # ===== 成果物 =====
 # output/ は個人の調査結果・スライド等なので共有対象外
 # 仕組み（skills, scripts, 設定）だけを共有する

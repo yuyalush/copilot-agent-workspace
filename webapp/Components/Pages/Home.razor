@@ -1,0 +1,132 @@
+﻿@page "/"
+@using CopilotWebApp.Services
+@inject GitHubActionsService GitHub
+@rendermode InteractiveServer
+
+<PageTitle>Copilot Slide Generator</PageTitle>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">🤖 Copilot プロンプト入力</h4>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="prompt" class="form-label fw-bold">プロンプト</label>
+                        <textarea @bind="prompt" id="prompt" class="form-control" rows="6"
+                                  placeholder="スライドのテーマを入力してください...&#10;例: Azure App Service の概要を5枚のスライドにまとめてください"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="model" class="form-label fw-bold">モデル</label>
+                        <select @bind="selectedModel" id="model" class="form-select">
+                            <option value="claude-opus-4.6">Claude Opus 4.6</option>
+                            <option value="claude-sonnet-4.6">Claude Sonnet 4.6</option>
+                            <option value="gpt-5.2">GPT-5.2</option>
+                            <option value="o3">o3</option>
+                        </select>
+                    </div>
+
+                    <button @onclick="RunWorkflow" class="btn btn-primary btn-lg w-100"
+                            disabled="@(isRunning || string.IsNullOrWhiteSpace(prompt))">
+                        @if (isRunning)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                            <span>実行中...</span>
+                        }
+                        else
+                        {
+                            <span>▶ 実行</span>
+                        }
+                    </button>
+
+                    @if (!string.IsNullOrEmpty(statusMessage))
+                    {
+                        <div class="alert @statusCss mt-3 mb-0" role="alert">
+                            @statusMessage
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">📋 テンプレート</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    @foreach (var tpl in templates)
+                    {
+                        <button class="list-group-item list-group-item-action" @onclick="() => ApplyTemplate(tpl)">
+                            <strong>@tpl.Name</strong>
+                            <br /><small class="text-muted">@tpl.Description</small>
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string prompt = "";
+    private string selectedModel = "claude-opus-4.6";
+    private bool isRunning = false;
+    private string statusMessage = "";
+    private string statusCss = "alert-info";
+
+    private record PromptTemplate(string Name, string Description, string Prompt);
+
+    private readonly List<PromptTemplate> templates = new()
+    {
+        new("Azure App Service",
+            "主要機能・料金プラン・デプロイ方法",
+            "Azure App Service の概要を PPTX でまとめてください。"),
+        new("Azure Cosmos DB",
+            "グローバル分散・API モデル・整合性レベル",
+            "Azure Cosmos DB の概要を PPTX でまとめてください。"),
+        new("Azure Container Apps",
+            "コンテナ実行・スケーリング・ネットワーク構成",
+            "Azure Container Apps の概要を PPTX でまとめてください。"),
+    };
+
+    private async Task RunWorkflow()
+    {
+        isRunning = true;
+        statusMessage = "ワークフローをトリガーしています...";
+        statusCss = "alert-info";
+        StateHasChanged();
+
+        try
+        {
+            var success = await GitHub.TriggerWorkflowAsync(prompt, selectedModel);
+            if (success)
+            {
+                statusMessage = "✅ ワークフローを開始しました！ジョブ一覧ページで進捗を確認してください。";
+                statusCss = "alert-success";
+            }
+            else
+            {
+                statusMessage = "❌ ワークフローの開始に失敗しました。設定を確認してください。";
+                statusCss = "alert-danger";
+            }
+        }
+        catch (Exception ex)
+        {
+            statusMessage = $"❌ エラー: {ex.Message}";
+            statusCss = "alert-danger";
+        }
+        finally
+        {
+            isRunning = false;
+        }
+    }
+
+    private void ApplyTemplate(PromptTemplate tpl)
+    {
+        prompt = tpl.Prompt;
+    }
+}

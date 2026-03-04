@@ -37,6 +37,7 @@
   - 顧客調査 → `output/customers/企業名/profile.md`
   - 提案書・報告書 → `output/documents/YYYY-MM-DD_HHmmss_ドキュメント名/document.md`
   - SVGスライド → `output/slides/YYYY-MM-DD_HHmmss_スライド名/slide01.svg` 〜
+- 日時は必ず日本時間（JST / Asia/Tokyo）で生成する
 - Markdown を主要フォーマットとする（再利用性・検索性・差分管理のため）
 - ファイル名にスペースを使わない（`_` または `-` で区切る）
 - フォルダ内の主要ファイルは用途別に命名する（`report.md` / `profile.md` / `document.md`）

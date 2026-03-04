@@ -89,6 +89,7 @@ jobs:
       - name: Run Copilot CLI
         env:
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_FG_TOKEN }}
+          TZ: Asia/Tokyo
         run: |
           echo "🤖 Prompt: ${{ inputs.prompt }}"
           echo "🧠 Model: ${{ inputs.model }}"
@@ -127,3 +128,28 @@ jobs:
           path: output/
           if-no-files-found: ignore
           retention-days: 7
+
+      # -------------------------------------------------------
+      # 8. Blob Storage にアップロード（Web App 用）
+      # -------------------------------------------------------
+      - name: Upload to Blob Storage
+        if: always()
+        env:
+          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+        run: |
+          if [ -z "$AZURE_STORAGE_CONNECTION_STRING" ]; then
+            echo "⚠️ AZURE_STORAGE_CONNECTION_STRING not set — skipping blob upload"
+            exit 0
+          fi
+          if [ -d "output" ] && [ "$(find output/ -type f | wc -l)" -gt 0 ]; then
+            echo "📤 Uploading to Blob Storage (prefix: runs/${{ github.run_number }}/)"
+            az storage blob upload-batch \
+              --destination copilot-outputs \
+              --source output/ \
+              --destination-path "runs/${{ github.run_number }}" \
+              --connection-string "$AZURE_STORAGE_CONNECTION_STRING" \
+              --overwrite
+            echo "✅ Blob upload complete"
+          else
+            echo "⚠️ No files in output/ — skipping blob upload"
+          fi

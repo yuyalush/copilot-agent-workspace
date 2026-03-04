@@ -1,0 +1,294 @@
+@page "/jobs"
+@using CopilotWebApp.Services
+@using Octokit
+@inject GitHubActionsService GitHub
+@inject BlobStorageService BlobStorage
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+@implements IDisposable
+@rendermode InteractiveServer
+
+<PageTitle>ジョブ一覧</PageTitle>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>📊 ジョブ一覧</h3>
+        <div>
+            <button @onclick="RefreshRuns" class="btn btn-outline-primary btn-sm" disabled="@isLoading">
+                @if (isLoading)
+                {
+                    <span class="spinner-border spinner-border-sm me-1"></span>
+                }
+                🔄 更新
+            </button>
+            <label class="form-check-label ms-3">
+                <input type="checkbox" class="form-check-input" @bind="autoRefresh" @bind:after="ToggleAutoRefresh" />
+                自動更新 (10秒)
+            </label>
+        </div>
+    </div>
+
+    @if (runs == null)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2 text-muted">読み込み中...</p>
+        </div>
+    }
+    else if (runs.Count == 0)
+    {
+        <div class="alert alert-info">
+            まだワークフロー実行がありません。<a href="/">プロンプト入力</a>から実行してください。
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>状態</th>
+                        <th>Run ID</th>
+                        <th>開始時刻</th>
+                        <th>所要時間</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var run in runs)
+                    {
+                        <tr>
+                            <td>
+                                <span class="badge @GetStatusBadge(run)">
+                                    @GetStatusLabel(run)
+                                </span>
+                            </td>
+                            <td><code>#@run.Id</code></td>
+                            <td>@run.CreatedAt.LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                            <td>
+                                @if (run.UpdatedAt != default)
+                                {
+                                    var duration = run.UpdatedAt - run.CreatedAt;
+                                    @($"{(int)duration.TotalMinutes}分{duration.Seconds}秒")
+                                }
+                                else
+                                {
+                                    <span class="text-muted">—</span>
+                                }
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-secondary" @onclick="() => ToggleDetail(run.Id)">
+                                    @(expandedRunId == run.Id ? "▲ 閉じる" : "▼ 詳細")
+                                </button>
+                                <a href="@run.HtmlUrl" target="_blank" class="btn btn-sm btn-outline-dark ms-1">
+                                    GitHub ↗
+                                </a>
+                            </td>
+                        </tr>
+
+                        @if (expandedRunId == run.Id)
+                        {
+                            <tr>
+                                <td colspan="5">
+                                    <div class="card card-body bg-light">
+                                        <h6>� 出力ファイル（Blob Storage）</h6>
+                                        @if (blobFiles == null)
+                                        {
+                                            <div class="spinner-border spinner-border-sm"></div>
+                                        }
+                                        else if (blobFiles.Count == 0)
+                                        {
+                                            <p class="text-muted mb-0">ファイルがありません（実行中の場合は完了後に表示されます）</p>
+                                        }
+                                        else
+                                        {
+                                            <div class="list-group">
+                                                @foreach (var file in blobFiles)
+                                                {
+                                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                                        <div>
+                                                            <span class="me-2">@GetFileIcon(file.FileName)</span>
+                                                            <strong>@file.FileName</strong>
+                                                            <small class="text-muted ms-2">
+                                                                @FormatSize(file.Size)
+                                                            </small>
+                                                        </div>
+                                                        <button class="btn btn-sm btn-primary"
+                                                                @onclick="() => DownloadBlob(file.BlobName, file.FileName)"
+                                                                disabled="@downloadingBlob">
+                                                            @if (downloadingBlob && downloadingBlobName == file.BlobName)
+                                                            {
+                                                                <span class="spinner-border spinner-border-sm me-1"></span>
+                                                            }
+                                                            ⬇ ダウンロード
+                                                        </button>
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@code {
+    private IReadOnlyList<WorkflowRun>? runs;
+    private List<BlobFileInfo>? blobFiles;
+    private long? expandedRunId;
+    private int? expandedRunNumber;
+    private bool isLoading = false;
+    private bool autoRefresh = false;
+    private bool downloadingBlob = false;
+    private string? downloadingBlobName;
+    private Timer? refreshTimer;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshRuns();
+    }
+
+    private async Task RefreshRuns()
+    {
+        isLoading = true;
+        StateHasChanged();
+
+        runs = await GitHub.GetRecentRunsAsync(20);
+
+        isLoading = false;
+        StateHasChanged();
+    }
+
+    private async Task ToggleDetail(long runId)
+    {
+        if (expandedRunId == runId)
+        {
+            expandedRunId = null;
+            expandedRunNumber = null;
+            blobFiles = null;
+            return;
+        }
+
+        expandedRunId = runId;
+        blobFiles = null;
+        StateHasChanged();
+
+        // WorkflowRun から RunNumber を取得して Blob をリスト
+        var run = runs?.FirstOrDefault(r => r.Id == runId);
+        if (run != null)
+        {
+            expandedRunNumber = (int)run.RunNumber;
+            blobFiles = await BlobStorage.ListFilesAsync(expandedRunNumber.Value);
+        }
+        else
+        {
+            blobFiles = new List<BlobFileInfo>();
+        }
+        StateHasChanged();
+    }
+
+    private async Task DownloadBlob(string blobName, string fileName)
+    {
+        downloadingBlob = true;
+        downloadingBlobName = blobName;
+        StateHasChanged();
+
+        try
+        {
+            var data = await BlobStorage.DownloadBlobAsync(blobName);
+            if (data != null)
+            {
+                // ファイル名はパスの最後の部分を使う
+                var downloadName = Path.GetFileName(fileName);
+                var base64 = Convert.ToBase64String(data);
+                var mimeType = GetMimeType(downloadName);
+                await JS.InvokeVoidAsync("downloadFile", downloadName, base64, mimeType);
+            }
+        }
+        finally
+        {
+            downloadingBlob = false;
+            downloadingBlobName = null;
+            StateHasChanged();
+        }
+    }
+
+    private void ToggleAutoRefresh()
+    {
+        if (autoRefresh)
+        {
+            refreshTimer = new Timer(async _ =>
+            {
+                await InvokeAsync(async () =>
+                {
+                    await RefreshRuns();
+                });
+            }, null, TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(10));
+        }
+        else
+        {
+            refreshTimer?.Dispose();
+            refreshTimer = null;
+        }
+    }
+
+    private static string GetStatusBadge(WorkflowRun run) => run.Status.StringValue switch
+    {
+        "completed" => (run.Conclusion?.StringValue == "success") ? "bg-success" : "bg-danger",
+        "in_progress" => "bg-warning text-dark",
+        "queued" => "bg-secondary",
+        _ => "bg-light text-dark"
+    };
+
+    private static string GetStatusLabel(WorkflowRun run) => run.Status.StringValue switch
+    {
+        "completed" => (run.Conclusion?.StringValue == "success") ? "✅ 成功" : "❌ 失敗",
+        "in_progress" => "⏳ 実行中",
+        "queued" => "🕐 待機中",
+        _ => run.Status.StringValue ?? "不明"
+    };
+
+    private static string FormatSize(long bytes)
+    {
+        if (bytes >= 1024 * 1024) return $"{bytes / (1024.0 * 1024.0):F1} MB";
+        if (bytes >= 1024) return $"{bytes / 1024.0:F1} KB";
+        return $"{bytes} B";
+    }
+
+    private static string GetFileIcon(string fileName)
+    {
+        var ext = Path.GetExtension(fileName).ToLowerInvariant();
+        return ext switch
+        {
+            ".pptx" => "📊",
+            ".svg" => "🖼️",
+            ".md" => "📝",
+            ".pdf" => "📄",
+            _ => "📎"
+        };
+    }
+
+    private static string GetMimeType(string fileName)
+    {
+        var ext = Path.GetExtension(fileName).ToLowerInvariant();
+        return ext switch
+        {
+            ".pptx" => "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            ".svg" => "image/svg+xml",
+            ".md" => "text/markdown",
+            ".pdf" => "application/pdf",
+            ".zip" => "application/zip",
+            _ => "application/octet-stream"
+        };
+    }
+
+    public void Dispose()
+    {
+        refreshTimer?.Dispose();
+    }
+}
