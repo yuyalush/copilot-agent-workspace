@@ -17,7 +17,17 @@ on:
       prompt:
         description: 'Copilot に渡すプロンプト'
         required: true
-        default: 'output/research/ 配下に Azure App Service の概要を report.md としてまとめてください。'
+        default: 'output/slides/ 配下に Azure App Service の概要スライド(SVG 960x540)を3枚作成し、scripts/svg2pptx.py で PPTX に変換してください。'
+      model:
+        description: 'AI モデル'
+        required: false
+        default: 'claude-opus-4.6'
+        type: choice
+        options:
+          - claude-opus-4.6
+          - claude-sonnet-4.6
+          - gpt-5.2
+          - o3
 
 permissions:
   contents: read
@@ -81,9 +91,10 @@ jobs:
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_FG_TOKEN }}
         run: |
           echo "🤖 Prompt: ${{ inputs.prompt }}"
+          echo "🧠 Model: ${{ inputs.model }}"
           echo "COPILOT_GITHUB_TOKEN length: ${#COPILOT_GITHUB_TOKEN}"
           echo ""
-          copilot -p "${{ inputs.prompt }}"
+          copilot -p "${{ inputs.prompt }}" --model ${{ inputs.model }}
 
       # -------------------------------------------------------
       # 6. 成果物の確認
