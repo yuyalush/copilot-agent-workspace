@@ -40,10 +40,6 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: copilot-poc
-  cancel-in-progress: false
-
 jobs:
   copilot-run:
     runs-on: ubuntu-latest
