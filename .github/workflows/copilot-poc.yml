@@ -79,9 +79,21 @@ jobs:
       - name: Run Copilot CLI
         env:
           COPILOT_GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
           echo "🤖 Prompt: ${{ inputs.prompt }}"
           echo ""
+          echo "--- 環境変数チェック ---"
+          echo "COPILOT_GITHUB_TOKEN length: ${#COPILOT_GITHUB_TOKEN}"
+          echo "GH_TOKEN length: ${#GH_TOKEN}"
+          echo "GITHUB_TOKEN length: ${#GITHUB_TOKEN}"
+          echo ""
+          echo "--- gh auth でログイン試行 ---"
+          echo "$COPILOT_GITHUB_TOKEN" | gh auth login --with-token 2>&1 || echo "gh auth login failed"
+          gh auth status 2>&1 || true
+          echo ""
+          echo "--- copilot 実行 ---"
           copilot -p "${{ inputs.prompt }}"
 
       # -------------------------------------------------------
