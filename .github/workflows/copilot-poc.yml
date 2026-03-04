@@ -17,7 +17,7 @@ on:
       prompt:
         description: 'Copilot に渡すプロンプト'
         required: true
-        default: 'output/slides/ 配下に Azure App Service の概要スライド(SVG 960x540)を3枚作成し、scripts/svg2pptx.py で PPTX に変換してください。'
+        default: 'Azure App Service の概要をMSLearnで調査して PPTX で出力してください。'
       model:
         description: 'AI モデル'
         required: false
