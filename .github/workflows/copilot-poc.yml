@@ -23,11 +23,23 @@ on:
   workflow_dispatch:
     inputs:
       prompt:
-        description: 'Copilot に渡すプロンプト'
+        description: 'Prompt to send to Copilot'
         required: true
-        default: 'Azure App Service の概要をMSLearnで調査して PPTX で出力してください。'
+        default: 'Azure App Service の概要をMSLearnで調査してください。'
+      output_format:
+        description: 'Output format (leave empty for no preference)'
+        required: false
+        default: 'PPTX'
+      language:
+        description: 'Output language'
+        required: false
+        default: 'Japanese'
+        type: choice
+        options:
+          - Japanese
+          - English
       model:
-        description: 'AI モデル'
+        description: 'AI model'
         required: false
         default: 'claude-opus-4.6'
         type: choice
@@ -37,7 +49,7 @@ on:
           - gpt-5.2
           - o3
       source:
-        description: 'トリガー元（github-ui / webapp）'
+        description: 'Trigger source'
         required: false
         default: 'github-ui'
         type: choice
@@ -106,10 +118,22 @@ jobs:
       - name: Run Copilot SDK
         env:
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_FG_TOKEN }}
-          COPILOT_PROMPT: ${{ inputs.prompt }}
+          COPILOT_PROMPT_BASE: ${{ inputs.prompt }}
+          COPILOT_OUTPUT_FORMAT: ${{ inputs.output_format }}
+          COPILOT_LANGUAGE: ${{ inputs.language }}
           COPILOT_MODEL: ${{ inputs.model }}
           TZ: Asia/Tokyo
-        run: node scripts/copilot-sdk-runner.mjs
+        run: |
+          SUFFIX=""
+          if [ -n "$COPILOT_OUTPUT_FORMAT" ]; then
+            SUFFIX=" ${COPILOT_OUTPUT_FORMAT}で出力してください。"
+          fi
+          if [ "$COPILOT_LANGUAGE" = "English" ]; then
+            SUFFIX="${SUFFIX} Please respond in English."
+          fi
+          export COPILOT_PROMPT="${COPILOT_PROMPT_BASE}${SUFFIX}"
+          echo "📝 Prompt: $COPILOT_PROMPT"
+          node scripts/copilot-sdk-runner.mjs
 
       # -------------------------------------------------------
       # 6. 成果物の確認
