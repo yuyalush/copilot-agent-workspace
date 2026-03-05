@@ -1,0 +1,29 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "webapp", "webapp", "{7E50A06F-A38B-7BE7-1137-409223B8AEF0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CopilotWebApp", "webapp\CopilotWebApp.csproj", "{054B2CCC-3CC2-F5C2-8FED-0AFA95481736}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{054B2CCC-3CC2-F5C2-8FED-0AFA95481736}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{054B2CCC-3CC2-F5C2-8FED-0AFA95481736}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{054B2CCC-3CC2-F5C2-8FED-0AFA95481736}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{054B2CCC-3CC2-F5C2-8FED-0AFA95481736}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{054B2CCC-3CC2-F5C2-8FED-0AFA95481736} = {7E50A06F-A38B-7BE7-1137-409223B8AEF0}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {33CD7954-222F-4AFB-8411-8F01D818D55F}
+	EndGlobalSection
+EndGlobal
