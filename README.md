@@ -1,5 +1,7 @@
 # Copilot Slide Agent
 
+> **🇯🇵 [日本語版はこちら / Japanese Version](#日本語版--japanese-version)**
+
 **One prompt → 10 minutes → Visually rich, editable PPTX with diagrams.**
 
 An agent powered by the GitHub Copilot SDK that generates **visually rich, diagram-rich, fully editable PowerPoint slides** from a single natural-language prompt.  
