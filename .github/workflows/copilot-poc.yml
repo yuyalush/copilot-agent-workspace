@@ -1,15 +1,22 @@
 # =============================================================
-# Copilot CLI PoC — GitHub Actions で Copilot CLI を実行
+# Copilot SDK Runner — GitHub Actions で Copilot SDK を実行
 # =============================================================
+# Copilot CLI を SDK 経由でプログラマティックに呼び出す。
+#
 # 前提:
 #   1. Fine-grained PAT を作成（Permission: Copilot Requests）
 #   2. リポジトリ Secret に COPILOT_FG_TOKEN として登録
-#   3. Actions タブ → "Copilot CLI PoC" → "Run workflow" で手動実行
+#   3. Actions タブ → "Copilot SDK Runner" → "Run workflow" で手動実行
 #
-# 参考: https://docs.github.com/copilot/using-copilot/using-copilot-cli/automating-tasks-with-copilot-cli-and-github-actions
+# アーキテクチャ:
+#   scripts/copilot-sdk-runner.mjs → @github/copilot-sdk → Copilot CLI (server mode)
+#
+# 参考:
+#   - https://github.com/github/copilot-sdk
+#   - https://docs.github.com/copilot/using-copilot/using-copilot-cli
 # =============================================================
 
-name: Copilot CLI PoC
+name: Copilot SDK Runner
 run-name: "${{ inputs.prompt }}"
 
 on:
@@ -60,10 +67,12 @@ jobs:
         uses: actions/setup-node@v4
 
       # -------------------------------------------------------
-      # 3. Copilot CLI インストール（公式手順）
+      # 3. Copilot CLI + SDK インストール
       # -------------------------------------------------------
-      - name: Install Copilot CLI
-        run: npm install -g @github/copilot
+      - name: Install Copilot CLI and SDK
+        run: |
+          npm install -g @github/copilot
+          npm install @github/copilot-sdk
 
       # -------------------------------------------------------
       # 4. インストール確認
@@ -72,6 +81,7 @@ jobs:
         run: |
           echo "📍 Which copilot: $(which copilot)"
           echo "📍 Copilot version: $(copilot --version 2>/dev/null || echo 'unknown')"
+          echo "📍 SDK installed: $(node -e "require('@github/copilot-sdk'); console.log('OK')" 2>&1)"
           copilot --help 2>&1 | head -20 || true
 
       # -------------------------------------------------------
@@ -89,18 +99,15 @@ jobs:
           fi
 
       # -------------------------------------------------------
-      # 6. Copilot CLI 実行（プログラムモード）
+      # 6. Copilot SDK 実行
       # -------------------------------------------------------
-      - name: Run Copilot CLI
+      - name: Run Copilot SDK
         env:
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_FG_TOKEN }}
+          COPILOT_PROMPT: ${{ inputs.prompt }}
+          COPILOT_MODEL: ${{ inputs.model }}
           TZ: Asia/Tokyo
-        run: |
-          echo "🤖 Prompt: ${{ inputs.prompt }}"
-          echo "🧠 Model: ${{ inputs.model }}"
-          echo "COPILOT_GITHUB_TOKEN length: ${#COPILOT_GITHUB_TOKEN}"
-          echo ""
-          copilot -p "${{ inputs.prompt }}" --model ${{ inputs.model }} --allow-all
+        run: node scripts/copilot-sdk-runner.mjs
 
       # -------------------------------------------------------
       # 6. 成果物の確認
