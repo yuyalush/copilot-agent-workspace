@@ -30,8 +30,7 @@ output/**
 .github/memory.json
 
 # ===== 生成バイナリ =====
-# presentations/ 内の PPTX は SVG から再生成可能（python scripts/svg2pptx.py）
-presentations/*.pptx
+# presentations/*.pptx — チャレンジ要件のため Git 管理に含める
 
 # ===== Challenge 提出固有 =====
 # 提出フォーム用サマリー（社内コンテスト用）
