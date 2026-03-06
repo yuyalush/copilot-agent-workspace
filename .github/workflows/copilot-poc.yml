@@ -148,6 +148,7 @@ jobs:
           if [ "$COPILOT_LANGUAGE" = "English" ]; then
             SUFFIX="${SUFFIX} Please respond in English."
           fi
+          SUFFIX="${SUFFIX} これはSDK非対話実行です。アウトラインの確認・承認ステップは不要です。承認済みとして直接ファイルを生成してください。"
           export COPILOT_PROMPT="${COPILOT_PROMPT_BASE}${SUFFIX}"
           echo "📝 Prompt: $COPILOT_PROMPT"
           node src/copilot-sdk-runner.mjs
