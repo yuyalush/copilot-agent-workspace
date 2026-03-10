@@ -1,0 +1,321 @@
+2026-03-10T09:40:07.9631288Z State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-03-10T09:40:12.9398862Z State: Starting, Action: StartingMsiContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-03-10T09:40:30.0941617Z State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-03-10T09:40:30.0948233Z Container start method called.
+2026-03-10T09:40:30.0949643Z State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.1.0.4:13209/appsvc/dotnetcore:10.0_20260115.4.tuxprod for app-ghcp-dev-b2vhhmx6qlwf6., DetailsLevel: INFO
+2026-03-10T09:40:30.0951099Z Establishing network.
+2026-03-10T09:40:30.0952730Z Pulling image: appsvc/dotnetcore:10.0_20260115.4.tuxprod.
+2026-03-10T09:41:59.7267026Z Image appsvc/dotnetcore:10.0_20260115.4.tuxprod is pulled from registry 10.1.0.5:13209
+2026-03-10T09:41:59.7270550Z Container is starting.
+2026-03-10T09:41:59.7585286Z State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for app-ghcp-dev-b2vhhmx6qlwf6., DetailsLevel: INFO
+2026-03-10T09:41:59.7590445Z Establishing user namespace if not established already.
+2026-03-10T09:41:59.7680683Z Establishing network if not established already.
+2026-03-10T09:41:59.7763483Z Mounting volumes.
+2026-03-10T09:41:59.7783260Z Nested mountpoint 
+2026-03-10T09:41:59.8585810Z Nested mountpoint volatile/logs
+2026-03-10T09:41:59.8877270Z Nested mountpoint 
+2026-03-10T09:41:59.9876617Z Nested mountpoint 
+2026-03-10T09:41:59.9884827Z Nested mountpoint 
+2026-03-10T09:42:00.5712152Z State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for app-ghcp-dev-b2vhhmx6qlwf6. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO
+2026-03-10T09:42:00.5716325Z Creating container.
+2026-03-10T09:42:00.5718076Z Creating pipes for streaming container io.
+2026-03-10T09:42:00.5720443Z Creating stdout named pipe at /podr/container/pipe/e4f0cf089bb7_app-ghcp-dev-b2vhhmx6qlwf6/stdout_93129779eb0e40bfb126dab54a78e9da.
+2026-03-10T09:42:00.5817515Z Successfully created stdout named pipe at: /podr/container/pipe/e4f0cf089bb7_app-ghcp-dev-b2vhhmx6qlwf6/stdout_93129779eb0e40bfb126dab54a78e9da.
+2026-03-10T09:42:00.5819710Z Opening named pipe /podr/container/pipe/e4f0cf089bb7_app-ghcp-dev-b2vhhmx6qlwf6/stdout_93129779eb0e40bfb126dab54a78e9da for reading in non-blocking mode.
+2026-03-10T09:42:00.5821601Z Successfully opened named pipe: /podr/container/pipe/e4f0cf089bb7_app-ghcp-dev-b2vhhmx6qlwf6/stdout_93129779eb0e40bfb126dab54a78e9da.
+2026-03-10T09:42:00.5822783Z Successfully removed non-blocking flag from /podr/container/pipe/e4f0cf089bb7_app-ghcp-dev-b2vhhmx6qlwf6/stdout_93129779eb0e40bfb126dab54a78e9da.
+2026-03-10T09:42:00.6610040Z Creating stderr named pipe at /podr/container/pipe/e4f0cf089bb7_app-ghcp-dev-b2vhhmx6qlwf6/stderr_a39b6add0f4a4d44ae5ff109b8ef2821.
+2026-03-10T09:42:00.6613987Z Successfully created stderr named pipe at: /podr/container/pipe/e4f0cf089bb7_app-ghcp-dev-b2vhhmx6qlwf6/stderr_a39b6add0f4a4d44ae5ff109b8ef2821.
+2026-03-10T09:42:00.6615471Z Opening named pipe /podr/container/pipe/e4f0cf089bb7_app-ghcp-dev-b2vhhmx6qlwf6/stderr_a39b6add0f4a4d44ae5ff109b8ef2821 for reading in non-blocking mode.
+2026-03-10T09:42:00.6621169Z Successfully opened named pipe: /podr/container/pipe/e4f0cf089bb7_app-ghcp-dev-b2vhhmx6qlwf6/stderr_a39b6add0f4a4d44ae5ff109b8ef2821.
+2026-03-10T09:42:00.6622542Z Successfully removed non-blocking flag from /podr/container/pipe/e4f0cf089bb7_app-ghcp-dev-b2vhhmx6qlwf6/stderr_a39b6add0f4a4d44ae5ff109b8ef2821.
+2026-03-10T09:42:00.6713984Z Creating container with image: appsvc/dotnetcore:10.0_20260115.4.tuxprod from registry: 10.1.0.5:13209 and fully qualified image name: 10.1.0.5:13209/appsvc/dotnetcore:10.0_20260115.4.tuxprod
+2026-03-10T09:42:01.9729062Z Starting container: e4f0cf089bb7_app-ghcp-dev-b2vhhmx6qlwf6.
+2026-03-10T09:42:02.2133392Z Starting watchers and probes.
+2026-03-10T09:42:02.2333212Z Starting metrics collection.
+2026-03-10T09:42:02.2416996Z Container is running.
+2026-03-10T09:42:02.2512963Z State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-ghcp-dev-b2vhhmx6qlwf6 successfully created and is running., DetailsLevel: INFO
+2026-03-10T09:42:02.4945699Z Container start method finished after 92399 ms.
+2026-03-10T09:42:02.5040147Z State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-ghcp-dev-b2vhhmx6qlwf6 successfully created and is running., DetailsLevel: INFO
+2026-03-10T09:42:02.5040985Z State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO
+2026-03-10T09:43:00.0085750Z Site startup probe succeeded after 57.4850035 seconds.
+2026-03-10T09:43:00.2682932Z State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 57.4850035 seconds., DetailsLevel: INFO
+2026-03-10T09:43:00.3484052Z Site started.
+2026-03-10T09:43:00.3495706Z State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 03/10/2026 09:43:00 (UTC), DetailsLevel: INFO
+2026-03-10T09:43:00.5100211Z Site is running with patch version DOTNETCORE 10.0.2
+2026-03-10T09:57:23.6242286Z State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-03-10T09:57:31.1624415Z State: Starting, Action: StartingMsiContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-03-10T09:57:54.4978557Z State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-03-10T09:57:54.4983043Z Container start method called.
+2026-03-10T09:57:54.4992595Z State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.1.0.5:13209/appsvc/dotnetcore:10.0_20260115.4.tuxprod for app-ghcp-dev-b2vhhmx6qlwf6., DetailsLevel: INFO
+2026-03-10T09:57:54.4994876Z Establishing network.
+2026-03-10T09:57:54.5002106Z Pulling image: appsvc/dotnetcore:10.0_20260115.4.tuxprod.
+2026-03-10T09:57:55.1191487Z Container is starting.
+2026-03-10T09:57:55.1197818Z State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for app-ghcp-dev-b2vhhmx6qlwf6., DetailsLevel: INFO
+2026-03-10T09:57:55.1202365Z Establishing user namespace if not established already.
+2026-03-10T09:57:55.1296663Z Establishing network if not established already.
+2026-03-10T09:57:55.1307639Z Mounting volumes.
+2026-03-10T09:57:55.1493626Z Nested mountpoint 
+2026-03-10T09:57:55.2514395Z Nested mountpoint volatile/logs
+2026-03-10T09:57:55.3018248Z Nested mountpoint 
+2026-03-10T09:57:55.3330717Z Nested mountpoint 
+2026-03-10T09:57:55.5541529Z Nested mountpoint 
+2026-03-10T09:57:56.6842833Z State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for app-ghcp-dev-b2vhhmx6qlwf6. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO
+2026-03-10T09:57:56.6846188Z Creating container.
+2026-03-10T09:57:56.6847540Z Creating pipes for streaming container io.
+2026-03-10T09:57:56.6848649Z Creating stdout named pipe at /podr/container/pipe/4915fc3d2fd1_app-ghcp-dev-b2vhhmx6qlwf6/stdout_8e7f0061009b4d86bfbe15332144a76f.
+2026-03-10T09:57:56.6851161Z Successfully created stdout named pipe at: /podr/container/pipe/4915fc3d2fd1_app-ghcp-dev-b2vhhmx6qlwf6/stdout_8e7f0061009b4d86bfbe15332144a76f.
+2026-03-10T09:57:56.6852366Z Opening named pipe /podr/container/pipe/4915fc3d2fd1_app-ghcp-dev-b2vhhmx6qlwf6/stdout_8e7f0061009b4d86bfbe15332144a76f for reading in non-blocking mode.
+2026-03-10T09:57:56.6854770Z Successfully opened named pipe: /podr/container/pipe/4915fc3d2fd1_app-ghcp-dev-b2vhhmx6qlwf6/stdout_8e7f0061009b4d86bfbe15332144a76f.
+2026-03-10T09:57:56.6856213Z Successfully removed non-blocking flag from /podr/container/pipe/4915fc3d2fd1_app-ghcp-dev-b2vhhmx6qlwf6/stdout_8e7f0061009b4d86bfbe15332144a76f.
+2026-03-10T09:57:56.7348412Z Creating stderr named pipe at /podr/container/pipe/4915fc3d2fd1_app-ghcp-dev-b2vhhmx6qlwf6/stderr_b125e588a60c4df89903e4b8a147c4a7.
+2026-03-10T09:57:56.7350415Z Successfully created stderr named pipe at: /podr/container/pipe/4915fc3d2fd1_app-ghcp-dev-b2vhhmx6qlwf6/stderr_b125e588a60c4df89903e4b8a147c4a7.
+2026-03-10T09:57:56.7351149Z Opening named pipe /podr/container/pipe/4915fc3d2fd1_app-ghcp-dev-b2vhhmx6qlwf6/stderr_b125e588a60c4df89903e4b8a147c4a7 for reading in non-blocking mode.
+2026-03-10T09:57:56.7352192Z Successfully opened named pipe: /podr/container/pipe/4915fc3d2fd1_app-ghcp-dev-b2vhhmx6qlwf6/stderr_b125e588a60c4df89903e4b8a147c4a7.
+2026-03-10T09:57:56.7352919Z Successfully removed non-blocking flag from /podr/container/pipe/4915fc3d2fd1_app-ghcp-dev-b2vhhmx6qlwf6/stderr_b125e588a60c4df89903e4b8a147c4a7.
+2026-03-10T09:57:56.8361893Z Creating container with image: appsvc/dotnetcore:10.0_20260115.4.tuxprod from registry: 10.1.0.5:13209 and fully qualified image name: 10.1.0.5:13209/appsvc/dotnetcore:10.0_20260115.4.tuxprod
+2026-03-10T09:57:58.5043707Z Starting container: 4915fc3d2fd1_app-ghcp-dev-b2vhhmx6qlwf6.
+2026-03-10T09:57:58.7144028Z Starting watchers and probes.
+2026-03-10T09:57:58.7152619Z Starting metrics collection.
+2026-03-10T09:57:58.7154527Z Container is running.
+2026-03-10T09:57:58.7155890Z State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-ghcp-dev-b2vhhmx6qlwf6 successfully created and is running., DetailsLevel: INFO
+2026-03-10T09:57:59.0045685Z Container start method finished after 4477 ms.
+2026-03-10T09:57:59.0714711Z State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-ghcp-dev-b2vhhmx6qlwf6 successfully created and is running., DetailsLevel: INFO
+2026-03-10T09:57:59.0727308Z State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO
+2026-03-10T09:59:07.9966604Z Site startup probe succeeded after 68.8628854 seconds.
+2026-03-10T09:59:08.3995596Z State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 68.8628854 seconds., DetailsLevel: INFO
+2026-03-10T09:59:08.4907701Z Site started.
+2026-03-10T09:59:08.4917551Z State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 03/10/2026 09:59:08 (UTC), DetailsLevel: INFO
+2026-03-10T09:59:08.5203992Z Site is running with patch version DOTNETCORE 10.0.2
+2026-03-10T09:59:28.7718245Z State: Stopping, Action: StoppingSite, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 03/10/2026 09:43:00 (UTC), DetailsLevel: INFO
+2026-03-10T09:59:28.8015636Z State: Stopping, Action: StoppingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 03/10/2026 09:43:00 (UTC), DetailsLevel: INFO
+2026-03-10T09:59:28.8022315Z Container is terminating. Grace period: 5 seconds.
+2026-03-10T09:59:28.8231972Z Stop and delete container. Retry count = 0
+2026-03-10T09:59:28.8239244Z Stopping container: e4f0cf089bb7_app-ghcp-dev-b2vhhmx6qlwf6.
+2026-03-10T09:59:34.1447322Z Deleting container: e4f0cf089bb7_app-ghcp-dev-b2vhhmx6qlwf6. Retry count = 0
+2026-03-10T09:59:34.8422506Z Container spec TerminationMessagePolicy  path 
+2026-03-10T09:59:34.8434309Z Container is terminated. Total time elapsed: 6040 ms.
+2026-03-10T09:59:34.8749929Z Site: app-ghcp-dev-b2vhhmx6qlwf6 stopped.
+2026-03-10T10:10:44.8342464Z State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-03-10T10:10:48.0379250Z State: Starting, Action: StartingMsiContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-03-10T10:11:01.3221535Z State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-03-10T10:11:01.3287018Z Container start method called.
+2026-03-10T10:11:01.3290968Z State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.1.0.5:13209/appsvc/dotnetcore:10.0_20260115.4.tuxprod for app-ghcp-dev-b2vhhmx6qlwf6., DetailsLevel: INFO
+2026-03-10T10:11:01.3292723Z Establishing network.
+2026-03-10T10:11:01.3294716Z Pulling image: appsvc/dotnetcore:10.0_20260115.4.tuxprod.
+2026-03-10T10:11:01.8137512Z Container is starting.
+2026-03-10T10:11:01.8317108Z State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for app-ghcp-dev-b2vhhmx6qlwf6., DetailsLevel: INFO
+2026-03-10T10:11:01.8329073Z Establishing user namespace if not established already.
+2026-03-10T10:11:01.8337931Z Establishing network if not established already.
+2026-03-10T10:11:01.8624651Z Mounting volumes.
+2026-03-10T10:11:01.8642518Z Nested mountpoint 
+2026-03-10T10:11:01.9324417Z Nested mountpoint volatile/logs
+2026-03-10T10:11:02.0041891Z Nested mountpoint 
+2026-03-10T10:11:02.1158867Z Nested mountpoint 
+2026-03-10T10:11:02.1740772Z Nested mountpoint 
+2026-03-10T10:11:02.8469177Z State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for app-ghcp-dev-b2vhhmx6qlwf6. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO
+2026-03-10T10:11:02.8475091Z Creating container.
+2026-03-10T10:11:02.8485530Z Creating pipes for streaming container io.
+2026-03-10T10:11:02.8489961Z Creating stdout named pipe at /podr/container/pipe/7e4b717d98c0_app-ghcp-dev-b2vhhmx6qlwf6/stdout_c08001f5dad64d319ee1e83f76db5b48.
+2026-03-10T10:11:02.8492565Z Successfully created stdout named pipe at: /podr/container/pipe/7e4b717d98c0_app-ghcp-dev-b2vhhmx6qlwf6/stdout_c08001f5dad64d319ee1e83f76db5b48.
+2026-03-10T10:11:02.8497875Z Opening named pipe /podr/container/pipe/7e4b717d98c0_app-ghcp-dev-b2vhhmx6qlwf6/stdout_c08001f5dad64d319ee1e83f76db5b48 for reading in non-blocking mode.
+2026-03-10T10:11:02.8577219Z Successfully opened named pipe: /podr/container/pipe/7e4b717d98c0_app-ghcp-dev-b2vhhmx6qlwf6/stdout_c08001f5dad64d319ee1e83f76db5b48.
+2026-03-10T10:11:02.8590062Z Successfully removed non-blocking flag from /podr/container/pipe/7e4b717d98c0_app-ghcp-dev-b2vhhmx6qlwf6/stdout_c08001f5dad64d319ee1e83f76db5b48.
+2026-03-10T10:11:02.8669499Z Creating stderr named pipe at /podr/container/pipe/7e4b717d98c0_app-ghcp-dev-b2vhhmx6qlwf6/stderr_68a7279fad494fae82d221e2a08acbad.
+2026-03-10T10:11:02.8671558Z Successfully created stderr named pipe at: /podr/container/pipe/7e4b717d98c0_app-ghcp-dev-b2vhhmx6qlwf6/stderr_68a7279fad494fae82d221e2a08acbad.
+2026-03-10T10:11:02.8672389Z Opening named pipe /podr/container/pipe/7e4b717d98c0_app-ghcp-dev-b2vhhmx6qlwf6/stderr_68a7279fad494fae82d221e2a08acbad for reading in non-blocking mode.
+2026-03-10T10:11:02.8674129Z Successfully opened named pipe: /podr/container/pipe/7e4b717d98c0_app-ghcp-dev-b2vhhmx6qlwf6/stderr_68a7279fad494fae82d221e2a08acbad.
+2026-03-10T10:11:02.8675759Z Successfully removed non-blocking flag from /podr/container/pipe/7e4b717d98c0_app-ghcp-dev-b2vhhmx6qlwf6/stderr_68a7279fad494fae82d221e2a08acbad.
+2026-03-10T10:11:02.8677175Z Creating container with image: appsvc/dotnetcore:10.0_20260115.4.tuxprod from registry: 10.1.0.5:13209 and fully qualified image name: 10.1.0.5:13209/appsvc/dotnetcore:10.0_20260115.4.tuxprod
+2026-03-10T10:11:03.6229581Z Starting container: 7e4b717d98c0_app-ghcp-dev-b2vhhmx6qlwf6.
+2026-03-10T10:11:03.8016713Z Starting watchers and probes.
+2026-03-10T10:11:03.8025090Z Starting metrics collection.
+2026-03-10T10:11:03.8027181Z Container is running.
+2026-03-10T10:11:03.8028185Z State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-ghcp-dev-b2vhhmx6qlwf6 successfully created and is running., DetailsLevel: INFO
+2026-03-10T10:11:04.1958204Z Container start method finished after 2866 ms.
+2026-03-10T10:11:04.1965477Z State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-ghcp-dev-b2vhhmx6qlwf6 successfully created and is running., DetailsLevel: INFO
+2026-03-10T10:11:04.2043463Z State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO
+2026-03-10T10:11:46.3258243Z Site startup probe succeeded after 42.1105459 seconds.
+2026-03-10T10:11:46.6672172Z State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 42.1105459 seconds., DetailsLevel: INFO
+2026-03-10T10:11:46.8090987Z Site is running with deployment version: 3e43a897-dc36-40e0-9848-8fb51643b09f
+2026-03-10T10:11:46.8177707Z Site started.
+2026-03-10T10:11:46.8179903Z State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 03/10/2026 10:11:46 (UTC), DetailsLevel: INFO
+2026-03-10T10:11:46.8190512Z Site is running with patch version DOTNETCORE 10.0.2
+2026-03-10T10:12:06.9439549Z State: Stopping, Action: StoppingSite, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 03/10/2026 09:59:08 (UTC), DetailsLevel: INFO
+2026-03-10T10:12:06.9643319Z State: Stopping, Action: StoppingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 03/10/2026 09:59:08 (UTC), DetailsLevel: INFO
+2026-03-10T10:12:06.9669020Z Container is terminating. Grace period: 5 seconds.
+2026-03-10T10:12:07.1873080Z Stop and delete container. Retry count = 0
+2026-03-10T10:12:07.1874332Z Stopping container: 4915fc3d2fd1_app-ghcp-dev-b2vhhmx6qlwf6.
+2026-03-10T10:12:12.3718190Z Deleting container: 4915fc3d2fd1_app-ghcp-dev-b2vhhmx6qlwf6. Retry count = 0
+2026-03-10T10:12:13.3132394Z Container spec TerminationMessagePolicy  path 
+2026-03-10T10:12:13.3237326Z Container is terminated. Total time elapsed: 6328 ms.
+2026-03-10T10:12:13.3440642Z Site: app-ghcp-dev-b2vhhmx6qlwf6 stopped.
+2026-03-10T10:12:18.4492927Z State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-03-10T10:12:26.8473503Z State: Starting, Action: StartingMsiContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-03-10T10:12:47.8836936Z State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-03-10T10:12:47.9138604Z Container start method called.
+2026-03-10T10:12:47.9139855Z State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.1.0.4:13209/appsvc/dotnetcore:10.0_20260115.4.tuxprod for app-ghcp-dev-b2vhhmx6qlwf6., DetailsLevel: INFO
+2026-03-10T10:12:47.9140926Z Establishing network.
+2026-03-10T10:12:47.9615475Z Pulling image: appsvc/dotnetcore:10.0_20260115.4.tuxprod.
+2026-03-10T10:12:49.3279650Z Image appsvc/dotnetcore:10.0_20260115.4.tuxprod is pulled from registry 10.1.0.4:13209
+2026-03-10T10:12:49.3281345Z Container is starting.
+2026-03-10T10:12:49.3282648Z State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for app-ghcp-dev-b2vhhmx6qlwf6., DetailsLevel: INFO
+2026-03-10T10:12:49.3283861Z Establishing user namespace if not established already.
+2026-03-10T10:12:49.3373376Z Establishing network if not established already.
+2026-03-10T10:12:49.3379068Z Mounting volumes.
+2026-03-10T10:12:49.3581374Z Nested mountpoint 
+2026-03-10T10:12:49.3971229Z Nested mountpoint volatile/logs
+2026-03-10T10:12:49.6068195Z Nested mountpoint 
+2026-03-10T10:12:49.6483519Z Nested mountpoint 
+2026-03-10T10:12:49.8589521Z Nested mountpoint 
+2026-03-10T10:12:52.3341474Z State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for app-ghcp-dev-b2vhhmx6qlwf6. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO
+2026-03-10T10:12:52.4947904Z Creating container.
+2026-03-10T10:12:52.4951328Z Creating pipes for streaming container io.
+2026-03-10T10:12:52.4952363Z Creating stdout named pipe at /podr/container/pipe/44d831470a63_app-ghcp-dev-b2vhhmx6qlwf6/stdout_8cb43386aed1426097d6cae18718cc73.
+2026-03-10T10:12:52.4954678Z Successfully created stdout named pipe at: /podr/container/pipe/44d831470a63_app-ghcp-dev-b2vhhmx6qlwf6/stdout_8cb43386aed1426097d6cae18718cc73.
+2026-03-10T10:12:52.4955439Z Opening named pipe /podr/container/pipe/44d831470a63_app-ghcp-dev-b2vhhmx6qlwf6/stdout_8cb43386aed1426097d6cae18718cc73 for reading in non-blocking mode.
+2026-03-10T10:12:52.4956458Z Successfully opened named pipe: /podr/container/pipe/44d831470a63_app-ghcp-dev-b2vhhmx6qlwf6/stdout_8cb43386aed1426097d6cae18718cc73.
+2026-03-10T10:12:52.4957190Z Successfully removed non-blocking flag from /podr/container/pipe/44d831470a63_app-ghcp-dev-b2vhhmx6qlwf6/stdout_8cb43386aed1426097d6cae18718cc73.
+2026-03-10T10:12:52.6040555Z Creating stderr named pipe at /podr/container/pipe/44d831470a63_app-ghcp-dev-b2vhhmx6qlwf6/stderr_3550d72335df4a998e0a7c746744f1b2.
+2026-03-10T10:12:52.6042993Z Successfully created stderr named pipe at: /podr/container/pipe/44d831470a63_app-ghcp-dev-b2vhhmx6qlwf6/stderr_3550d72335df4a998e0a7c746744f1b2.
+2026-03-10T10:12:52.6043812Z Opening named pipe /podr/container/pipe/44d831470a63_app-ghcp-dev-b2vhhmx6qlwf6/stderr_3550d72335df4a998e0a7c746744f1b2 for reading in non-blocking mode.
+2026-03-10T10:12:52.6045017Z Successfully opened named pipe: /podr/container/pipe/44d831470a63_app-ghcp-dev-b2vhhmx6qlwf6/stderr_3550d72335df4a998e0a7c746744f1b2.
+2026-03-10T10:12:52.6045840Z Successfully removed non-blocking flag from /podr/container/pipe/44d831470a63_app-ghcp-dev-b2vhhmx6qlwf6/stderr_3550d72335df4a998e0a7c746744f1b2.
+2026-03-10T10:12:52.6539978Z Creating container with image: appsvc/dotnetcore:10.0_20260115.4.tuxprod from registry: 10.1.0.4:13209 and fully qualified image name: 10.1.0.4:13209/appsvc/dotnetcore:10.0_20260115.4.tuxprod
+2026-03-10T10:12:56.7310625Z Starting container: 44d831470a63_app-ghcp-dev-b2vhhmx6qlwf6.
+2026-03-10T10:12:57.2320361Z Starting watchers and probes.
+2026-03-10T10:12:57.2828481Z Starting metrics collection.
+2026-03-10T10:12:57.2831018Z Container is running.
+2026-03-10T10:12:57.2845930Z State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-ghcp-dev-b2vhhmx6qlwf6 successfully created and is running., DetailsLevel: INFO
+2026-03-10T10:12:57.7855331Z Container start method finished after 9870 ms.
+2026-03-10T10:12:57.8750596Z State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-ghcp-dev-b2vhhmx6qlwf6 successfully created and is running., DetailsLevel: INFO
+2026-03-10T10:12:57.8750977Z State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO
+2026-03-10T10:14:09.6579064Z Site startup probe succeeded after 71.7548579 seconds.
+2026-03-10T10:14:09.9911994Z State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 71.7548579 seconds., DetailsLevel: INFO
+2026-03-10T10:14:10.1123709Z Site is running with deployment version: 130ad5c9-8298-4490-9bf8-ab39ba1963ff
+2026-03-10T10:14:10.1424700Z Site started.
+2026-03-10T10:14:10.1508166Z State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 03/10/2026 10:14:10 (UTC), DetailsLevel: INFO
+2026-03-10T10:14:10.1523370Z Site is running with patch version DOTNETCORE 10.0.2
+2026-03-10T10:14:30.3095296Z State: Stopping, Action: StoppingSite, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 03/10/2026 10:11:46 (UTC), DetailsLevel: INFO
+2026-03-10T10:14:30.3098180Z State: Stopping, Action: StoppingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 03/10/2026 10:11:46 (UTC), DetailsLevel: INFO
+2026-03-10T10:14:30.3099492Z Container is terminating. Grace period: 5 seconds.
+2026-03-10T10:14:30.4407280Z Stop and delete container. Retry count = 0
+2026-03-10T10:14:30.4409165Z Stopping container: 7e4b717d98c0_app-ghcp-dev-b2vhhmx6qlwf6.
+2026-03-10T10:14:36.6113369Z Deleting container: 7e4b717d98c0_app-ghcp-dev-b2vhhmx6qlwf6. Retry count = 0
+2026-03-10T10:14:37.9719203Z Container spec TerminationMessagePolicy  path 
+2026-03-10T10:14:37.9738921Z Container is terminated. Total time elapsed: 7663 ms.
+2026-03-10T10:14:38.0540334Z Site: app-ghcp-dev-b2vhhmx6qlwf6 stopped.
+2026-03-10T10:19:08.1408048Z State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-03-10T10:19:11.9409405Z State: Starting, Action: StartingMsiContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-03-10T10:19:30.0653441Z State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-03-10T10:19:30.0663326Z Container start method called.
+2026-03-10T10:19:30.0668157Z State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image 10.1.0.4:13209/appsvc/dotnetcore:10.0_20260115.4.tuxprod for app-ghcp-dev-b2vhhmx6qlwf6., DetailsLevel: INFO
+2026-03-10T10:19:30.0856009Z Establishing network.
+2026-03-10T10:19:30.0863627Z Pulling image: appsvc/dotnetcore:10.0_20260115.4.tuxprod.
+2026-03-10T10:19:30.5102899Z Container is starting.
+2026-03-10T10:19:30.5190970Z State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for app-ghcp-dev-b2vhhmx6qlwf6., DetailsLevel: INFO
+2026-03-10T10:19:30.5203546Z Establishing user namespace if not established already.
+2026-03-10T10:19:30.5209073Z Establishing network if not established already.
+2026-03-10T10:19:30.5210604Z Mounting volumes.
+2026-03-10T10:19:30.5292697Z Nested mountpoint 
+2026-03-10T10:19:30.6199395Z Nested mountpoint volatile/logs
+2026-03-10T10:19:30.6495393Z Nested mountpoint 
+2026-03-10T10:19:30.9223428Z Nested mountpoint 
+2026-03-10T10:19:30.9729834Z Nested mountpoint 
+2026-03-10T10:19:32.1084698Z State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for app-ghcp-dev-b2vhhmx6qlwf6. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO
+2026-03-10T10:19:32.1169730Z Creating container.
+2026-03-10T10:19:32.1181609Z Creating pipes for streaming container io.
+2026-03-10T10:19:32.1183187Z Creating stdout named pipe at /podr/container/pipe/7476cd14c458_app-ghcp-dev-b2vhhmx6qlwf6/stdout_4a7b3a5382324aa6b8a62505f6b03886.
+2026-03-10T10:19:32.1185766Z Successfully created stdout named pipe at: /podr/container/pipe/7476cd14c458_app-ghcp-dev-b2vhhmx6qlwf6/stdout_4a7b3a5382324aa6b8a62505f6b03886.
+2026-03-10T10:19:32.1268238Z Opening named pipe /podr/container/pipe/7476cd14c458_app-ghcp-dev-b2vhhmx6qlwf6/stdout_4a7b3a5382324aa6b8a62505f6b03886 for reading in non-blocking mode.
+2026-03-10T10:19:32.1273063Z Successfully opened named pipe: /podr/container/pipe/7476cd14c458_app-ghcp-dev-b2vhhmx6qlwf6/stdout_4a7b3a5382324aa6b8a62505f6b03886.
+2026-03-10T10:19:32.1283284Z Successfully removed non-blocking flag from /podr/container/pipe/7476cd14c458_app-ghcp-dev-b2vhhmx6qlwf6/stdout_4a7b3a5382324aa6b8a62505f6b03886.
+2026-03-10T10:19:32.1964974Z Creating stderr named pipe at /podr/container/pipe/7476cd14c458_app-ghcp-dev-b2vhhmx6qlwf6/stderr_43e7f2227e6d401280591e207a4b16e5.
+2026-03-10T10:19:32.1983177Z Successfully created stderr named pipe at: /podr/container/pipe/7476cd14c458_app-ghcp-dev-b2vhhmx6qlwf6/stderr_43e7f2227e6d401280591e207a4b16e5.
+2026-03-10T10:19:32.1984809Z Opening named pipe /podr/container/pipe/7476cd14c458_app-ghcp-dev-b2vhhmx6qlwf6/stderr_43e7f2227e6d401280591e207a4b16e5 for reading in non-blocking mode.
+2026-03-10T10:19:32.1986316Z Successfully opened named pipe: /podr/container/pipe/7476cd14c458_app-ghcp-dev-b2vhhmx6qlwf6/stderr_43e7f2227e6d401280591e207a4b16e5.
+2026-03-10T10:19:32.1987408Z Successfully removed non-blocking flag from /podr/container/pipe/7476cd14c458_app-ghcp-dev-b2vhhmx6qlwf6/stderr_43e7f2227e6d401280591e207a4b16e5.
+2026-03-10T10:19:32.1996624Z Creating container with image: appsvc/dotnetcore:10.0_20260115.4.tuxprod from registry: 10.1.0.4:13209 and fully qualified image name: 10.1.0.4:13209/appsvc/dotnetcore:10.0_20260115.4.tuxprod
+2026-03-10T10:19:33.2309690Z Starting container: 7476cd14c458_app-ghcp-dev-b2vhhmx6qlwf6.
+2026-03-10T10:19:33.3617207Z Starting watchers and probes.
+2026-03-10T10:19:33.3727426Z Starting metrics collection.
+2026-03-10T10:19:33.3921798Z Container is running.
+2026-03-10T10:19:33.3930191Z State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-ghcp-dev-b2vhhmx6qlwf6 successfully created and is running., DetailsLevel: INFO
+2026-03-10T10:19:33.7737449Z Container start method finished after 3706 ms.
+2026-03-10T10:19:33.7739585Z State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-ghcp-dev-b2vhhmx6qlwf6 successfully created and is running., DetailsLevel: INFO
+2026-03-10T10:19:33.7739895Z State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO
+2026-03-10T10:20:18.8259259Z Site startup probe succeeded after 44.8789399 seconds.
+2026-03-10T10:20:19.0838491Z State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 44.8789399 seconds., DetailsLevel: INFO
+2026-03-10T10:20:19.2259258Z Site is running with deployment version: 3659c007-bca0-4fc8-b509-891dcf57d91f
+2026-03-10T10:20:19.2437434Z Site started.
+2026-03-10T10:20:19.2931303Z State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 03/10/2026 10:20:19 (UTC), DetailsLevel: INFO
+2026-03-10T10:20:19.3135431Z Site is running with patch version DOTNETCORE 10.0.2
+2026-03-10T10:20:39.5081168Z State: Stopping, Action: StoppingSite, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 03/10/2026 10:14:10 (UTC), DetailsLevel: INFO
+2026-03-10T10:20:39.5175223Z State: Stopping, Action: StoppingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 03/10/2026 10:14:10 (UTC), DetailsLevel: INFO
+2026-03-10T10:20:39.5262928Z Container is terminating. Grace period: 5 seconds.
+2026-03-10T10:20:39.6462413Z Stop and delete container. Retry count = 0
+2026-03-10T10:20:39.6476602Z Stopping container: 44d831470a63_app-ghcp-dev-b2vhhmx6qlwf6.
+2026-03-10T10:20:44.8621494Z Deleting container: 44d831470a63_app-ghcp-dev-b2vhhmx6qlwf6. Retry count = 0
+2026-03-10T10:20:45.2042979Z Container spec TerminationMessagePolicy  path 
+2026-03-10T10:20:45.2227544Z Container is terminated. Total time elapsed: 5694 ms.
+2026-03-10T10:20:45.2250191Z Site: app-ghcp-dev-b2vhhmx6qlwf6 stopped.
+2026-03-10T10:24:35.8159000Z State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-03-10T10:24:42.7884838Z State: Starting, Action: StartingMsiContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-03-10T10:24:53.7071487Z State: Starting, Action: StartingMsiContainer, LastError: SiteStartupCancelled, LastErrorTimestamp: 03/10/2026 10:24:53, LastErrorDetails: , Details: , DetailsLevel: WARN
+2026-03-10T10:24:53.8583320Z State: Stopping, Action: StoppingSite, LastError: SiteStartupCancelled, LastErrorTimestamp: 03/10/2026 10:24:53, LastErrorDetails: , Details: , DetailsLevel: WARN
+2026-03-10T10:24:53.8588084Z State: Stopping, Action: StoppingSiteContainers, LastError: SiteStartupCancelled, LastErrorTimestamp: 03/10/2026 10:24:53, LastErrorDetails: , Details: , DetailsLevel: WARN
+2026-03-10T10:24:53.8588343Z Site: app-ghcp-dev-b2vhhmx6qlwf6 stopped.
+2026-03-10T10:25:23.3766238Z State: Stopping, Action: StoppingSite, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 03/10/2026 10:20:19 (UTC), DetailsLevel: INFO
+2026-03-10T10:25:23.4157180Z State: Stopping, Action: StoppingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 03/10/2026 10:20:19 (UTC), DetailsLevel: INFO
+2026-03-10T10:25:23.4159924Z Container is terminating. Grace period: 5 seconds.
+2026-03-10T10:25:23.4546913Z Stop and delete container. Retry count = 0
+2026-03-10T10:25:23.4555007Z Stopping container: 7476cd14c458_app-ghcp-dev-b2vhhmx6qlwf6.
+2026-03-10T10:25:28.6352887Z Deleting container: 7476cd14c458_app-ghcp-dev-b2vhhmx6qlwf6. Retry count = 0
+2026-03-10T10:25:28.8741674Z Container spec TerminationMessagePolicy  path 
+2026-03-10T10:25:28.8760737Z Container is terminated. Total time elapsed: 5459 ms.
+2026-03-10T10:25:28.8840597Z Site: app-ghcp-dev-b2vhhmx6qlwf6 stopped.
+2026-03-10T10:25:51.2852493Z State: Starting, Action: EstablishingSiteNetworks, LastError: SiteStartupCancelled, LastErrorTimestamp: 03/10/2026 10:24:53, LastErrorDetails: , Details: Site stopped at 03/10/2026 10:25:02 (UTC), DetailsLevel: WARN
+2026-03-10T10:25:54.1878825Z State: Starting, Action: StartingMsiContainer, LastError: SiteStartupCancelled, LastErrorTimestamp: 03/10/2026 10:24:53, LastErrorDetails: , Details: Site stopped at 03/10/2026 10:25:02 (UTC), DetailsLevel: WARN
+2026-03-10T10:26:07.1008009Z State: Starting, Action: StartingSiteContainers, LastError: SiteStartupCancelled, LastErrorTimestamp: 03/10/2026 10:24:53, LastErrorDetails: , Details: Site stopped at 03/10/2026 10:25:02 (UTC), DetailsLevel: WARN
+2026-03-10T10:26:07.1396574Z Container start method called.
+2026-03-10T10:26:07.1404661Z State: Starting, Action: PullingImage, LastError: SiteStartupCancelled, LastErrorTimestamp: 03/10/2026 10:24:53, LastErrorDetails: , Details: Pulling image 10.1.0.4:13209/appsvc/dotnetcore:10.0_20260115.4.tuxprod for app-ghcp-dev-b2vhhmx6qlwf6., DetailsLevel: INFO
+2026-03-10T10:26:07.1408987Z Establishing network.
+2026-03-10T10:26:07.1410382Z Pulling image: appsvc/dotnetcore:10.0_20260115.4.tuxprod.
+2026-03-10T10:26:07.3652946Z Container is starting.
+2026-03-10T10:26:07.3731238Z State: Starting, Action: MountingVolumes, LastError: SiteStartupCancelled, LastErrorTimestamp: 03/10/2026 10:24:53, LastErrorDetails: , Details: Mounting volumes for app-ghcp-dev-b2vhhmx6qlwf6., DetailsLevel: INFO
+2026-03-10T10:26:07.3737711Z Establishing user namespace if not established already.
+2026-03-10T10:26:07.3739385Z Establishing network if not established already.
+2026-03-10T10:26:07.3742645Z Mounting volumes.
+2026-03-10T10:26:07.3752525Z Nested mountpoint 
+2026-03-10T10:26:07.4246775Z Nested mountpoint volatile/logs
+2026-03-10T10:26:07.4458378Z Nested mountpoint 
+2026-03-10T10:26:07.4758970Z Nested mountpoint 
+2026-03-10T10:26:07.4959093Z Nested mountpoint 
+2026-03-10T10:26:07.9669676Z State: Starting, Action: CreatingContainer, LastError: SiteStartupCancelled, LastErrorTimestamp: 03/10/2026 10:24:53, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for app-ghcp-dev-b2vhhmx6qlwf6. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO
+2026-03-10T10:26:07.9671469Z Creating container.
+2026-03-10T10:26:07.9672609Z Creating pipes for streaming container io.
+2026-03-10T10:26:07.9673656Z Creating stdout named pipe at /podr/container/pipe/f62bc6be7354_app-ghcp-dev-b2vhhmx6qlwf6/stdout_301ec8659e6f473b80180645131236e4.
+2026-03-10T10:26:07.9676028Z Successfully created stdout named pipe at: /podr/container/pipe/f62bc6be7354_app-ghcp-dev-b2vhhmx6qlwf6/stdout_301ec8659e6f473b80180645131236e4.
+2026-03-10T10:26:07.9677121Z Opening named pipe /podr/container/pipe/f62bc6be7354_app-ghcp-dev-b2vhhmx6qlwf6/stdout_301ec8659e6f473b80180645131236e4 for reading in non-blocking mode.
+2026-03-10T10:26:07.9678438Z Successfully opened named pipe: /podr/container/pipe/f62bc6be7354_app-ghcp-dev-b2vhhmx6qlwf6/stdout_301ec8659e6f473b80180645131236e4.
+2026-03-10T10:26:07.9679527Z Successfully removed non-blocking flag from /podr/container/pipe/f62bc6be7354_app-ghcp-dev-b2vhhmx6qlwf6/stdout_301ec8659e6f473b80180645131236e4.
+2026-03-10T10:26:07.9681278Z Creating stderr named pipe at /podr/container/pipe/f62bc6be7354_app-ghcp-dev-b2vhhmx6qlwf6/stderr_6c1c55ff6ca2489da2bb5bd7e365cbf2.
+2026-03-10T10:26:07.9778022Z Successfully created stderr named pipe at: /podr/container/pipe/f62bc6be7354_app-ghcp-dev-b2vhhmx6qlwf6/stderr_6c1c55ff6ca2489da2bb5bd7e365cbf2.
+2026-03-10T10:26:07.9779635Z Opening named pipe /podr/container/pipe/f62bc6be7354_app-ghcp-dev-b2vhhmx6qlwf6/stderr_6c1c55ff6ca2489da2bb5bd7e365cbf2 for reading in non-blocking mode.
+2026-03-10T10:26:07.9780919Z Successfully opened named pipe: /podr/container/pipe/f62bc6be7354_app-ghcp-dev-b2vhhmx6qlwf6/stderr_6c1c55ff6ca2489da2bb5bd7e365cbf2.
+2026-03-10T10:26:07.9781675Z Successfully removed non-blocking flag from /podr/container/pipe/f62bc6be7354_app-ghcp-dev-b2vhhmx6qlwf6/stderr_6c1c55ff6ca2489da2bb5bd7e365cbf2.
+2026-03-10T10:26:07.9975135Z Creating container with image: appsvc/dotnetcore:10.0_20260115.4.tuxprod from registry: 10.1.0.4:13209 and fully qualified image name: 10.1.0.4:13209/appsvc/dotnetcore:10.0_20260115.4.tuxprod
+2026-03-10T10:26:08.5023520Z Starting container: f62bc6be7354_app-ghcp-dev-b2vhhmx6qlwf6.
+2026-03-10T10:26:08.6717249Z Starting watchers and probes.
+2026-03-10T10:26:08.6729060Z Starting metrics collection.
+2026-03-10T10:26:08.7022079Z Container is running.
+2026-03-10T10:26:08.7023463Z State: Starting, Action: CreatingContainer, LastError: SiteStartupCancelled, LastErrorTimestamp: 03/10/2026 10:24:53, LastErrorDetails: , Details: Container app-ghcp-dev-b2vhhmx6qlwf6 successfully created and is running., DetailsLevel: INFO
+2026-03-10T10:26:08.8430329Z Container start method finished after 1701 ms.
+2026-03-10T10:26:08.8439416Z State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: SiteStartupCancelled, LastErrorTimestamp: 03/10/2026 10:24:53, LastErrorDetails: , Details: Container app-ghcp-dev-b2vhhmx6qlwf6 successfully created and is running., DetailsLevel: INFO
+2026-03-10T10:26:08.9047607Z State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: SiteStartupCancelled, LastErrorTimestamp: 03/10/2026 10:24:53, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO
+2026-03-10T10:26:50.8922440Z Site startup probe succeeded after 41.9285338 seconds.
+2026-03-10T10:26:51.0627236Z State: Starting, Action: WarmUpProbeSucceeded, LastError: SiteStartupCancelled, LastErrorTimestamp: 03/10/2026 10:24:53, LastErrorDetails: , Details: Site startup probe succeeded after 41.9285338 seconds., DetailsLevel: INFO
+2026-03-10T10:26:51.1432002Z Site is running with deployment version: 3659c007-bca0-4fc8-b509-891dcf57d91f
+2026-03-10T10:26:51.1520275Z Site started.
+2026-03-10T10:26:51.1528956Z State: Started, Action: None, LastError: SiteStartupCancelled, LastErrorTimestamp: 03/10/2026 10:24:53, LastErrorDetails: , Details: Site started at 03/10/2026 10:26:51 (UTC), DetailsLevel: INFO
+2026-03-10T10:26:51.2124728Z Site is running with patch version DOTNETCORE 10.0.2

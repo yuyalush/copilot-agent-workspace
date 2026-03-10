@@ -37,8 +37,7 @@ public class GitHubActionsService
             var inputs = new Dictionary<string, object>
             {
                 ["prompt"] = prompt,
-                ["model"] = model,
-                ["source"] = "webapp"
+                ["model"] = model
             };
 
             // Octokit の CreateDispatch を使用
