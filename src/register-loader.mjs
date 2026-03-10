@@ -10,6 +10,5 @@
 // =============================================================
 
 import { register } from "node:module";
-import { pathToFileURL } from "node:url";
 
-register("./esm-loader.mjs", pathToFileURL(import.meta.url));
+register("./esm-loader.mjs", import.meta.url);
