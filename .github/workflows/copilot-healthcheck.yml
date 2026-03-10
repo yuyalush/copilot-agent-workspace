@@ -1,8 +1,9 @@
 # =============================================================
-# Copilot SDK ヘルスチェック — 毎日定時実行 & 失敗時 Issue 自動作成
+# Copilot E2E ヘルスチェック — PPTX 生成まで毎日検証
 # =============================================================
-# 1日1回、Copilot SDK が正常に動作するかを軽量プロンプトで確認。
-# 失敗した場合は GitHub Issue を自動作成して通知する。
+# 1日1回、SDK → SVG 生成 → svg2pptx.py 変換 → PPTX 出力の
+# エンドツーエンドパイプラインを実行し、どこかで失敗したら
+# エラーログ付きの Issue を自動作成して Copilot Coding Agent にアサインする。
 #
 # 必要な Secrets:
 #   COPILOT_FG_TOKEN — SDK 実行用 PAT（Public repos / copilot requests: read）
@@ -11,7 +12,7 @@
 #                       issues:rw, pull_requests:rw）
 # =============================================================
 
-name: Copilot SDK Healthcheck
+name: Copilot E2E Healthcheck
 
 on:
   schedule:
@@ -32,7 +33,7 @@ permissions:
 jobs:
   healthcheck:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
 
     steps:
       # -------------------------------------------------------
@@ -50,33 +51,115 @@ jobs:
           node-version: '22'
 
       # -------------------------------------------------------
-      # 3. Copilot CLI + SDK インストール
+      # 3. Python セットアップ
       # -------------------------------------------------------
-      - name: Install Copilot CLI and SDK
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # -------------------------------------------------------
+      # 4. 依存パッケージインストール（Node + Python）
+      # -------------------------------------------------------
+      - name: Install dependencies
         run: |
           npm install -g @github/copilot
           npm install
+          pip install -r src/requirements.txt
 
       # -------------------------------------------------------
-      # 4. ヘルスチェック実行（軽量プロンプト）
+      # 5. E2E ヘルスチェック実行（SDK → SVG → PPTX）
       # -------------------------------------------------------
-      - name: Run healthcheck
+      - name: Run E2E healthcheck
         id: healthcheck
         env:
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_FG_TOKEN }}
-          COPILOT_PROMPT: "Hello. Reply with just 'OK' to confirm you are working."
+          COPILOT_PROMPT: >-
+            ヘルスチェック用テストスライドを1枚だけ作成してください。
+            テーマ: 「GitHub Copilot ヘルスチェック」
+            output/slides/healthcheck/ に SVG ファイル（960x540）を 1 枚出力し、
+            その後 python src/svg2pptx.py output/slides/healthcheck/ を実行して
+            PPTX に変換してください。
+            これはSDK非対話実行です。アウトラインの確認・承認ステップは不要です。承認済みとして直接ファイルを生成してください。
           COPILOT_MODEL: claude-opus-4.6
           COPILOT_MAX_RETRIES: "2"
-          COPILOT_TIMEOUT_MS: "120000"
+          COPILOT_TIMEOUT_MS: "600000"
         run: |
           if [ "${{ inputs.simulate_failure }}" = "true" ]; then
             echo "🧪 テスト失敗モード: 意図的にエラーを発生させます"
             exit 1
           fi
-          node --import ./src/register-loader.mjs src/copilot-sdk-runner.mjs
+          node --import ./src/register-loader.mjs src/copilot-sdk-runner.mjs 2>&1 | tee /tmp/healthcheck.log
 
       # -------------------------------------------------------
-      # 5. 失敗時に Issue を作成
+      # 6. PPTX 生成を検証
+      # -------------------------------------------------------
+      - name: Verify PPTX output
+        id: verify
+        if: success()
+        run: |
+          echo "📂 output/ の中身:"
+          find output/ -type f 2>/dev/null || echo "(ファイルなし)"
+
+          PPTX_COUNT=$(find output/ -name "*.pptx" 2>/dev/null | wc -l)
+          SVG_COUNT=$(find output/ -name "*.svg" 2>/dev/null | wc -l)
+          echo "📊 SVG: ${SVG_COUNT} 件, PPTX: ${PPTX_COUNT} 件"
+
+          if [ "$PPTX_COUNT" -eq 0 ]; then
+            echo "❌ PPTX ファイルが生成されていません"
+            exit 1
+          fi
+          echo "✅ E2E ヘルスチェック成功（PPTX ${PPTX_COUNT} 件生成）"
+
+      # -------------------------------------------------------
+      # 7. 失敗時にエラーログを収集
+      # -------------------------------------------------------
+      - name: Collect error logs
+        id: collect-logs
+        if: failure()
+        run: |
+          {
+            echo "## E2E ヘルスチェック失敗"
+            echo ""
+            echo "**Run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            echo ""
+            echo "### エラーログ（末尾 80 行）"
+            echo ""
+            echo '```'
+            if [ -f /tmp/healthcheck.log ]; then
+              tail -80 /tmp/healthcheck.log
+            else
+              echo "(ログファイルなし — セットアップ段階で失敗した可能性)"
+            fi
+            echo '```'
+            echo ""
+            echo "### ワークスペース状態"
+            echo ""
+            echo '```'
+            echo "--- output/ ---"
+            find output/ -type f 2>/dev/null || echo "(output/ ディレクトリなし)"
+            echo ""
+            echo "--- git status ---"
+            git status --short
+            echo '```'
+            echo ""
+            echo "### 対応指示"
+            echo ""
+            echo "上記のエラーログを分析し、原因を特定して修正してください。"
+            echo ""
+            echo "よくある原因:"
+            echo "- \`@github/copilot-sdk\` の破壊的変更（ESM loader: \`src/esm-loader.mjs\`）"
+            echo "- \`svg2pptx.py\` の SVG パース失敗（不正な SVG 出力）"
+            echo "- \`python-pptx\` / \`lxml\` の互換性問題"
+            echo "- PAT（\`COPILOT_FG_TOKEN\`）の有効期限切れ"
+            echo "- Copilot サービス障害: https://www.githubstatus.com/"
+            echo ""
+            echo "修正後、\`copilot-healthcheck.yml\` を手動実行して動作確認してください。"
+          } > /tmp/issue_body.md
+          echo "📋 Issue 本文を生成しました"
+
+      # -------------------------------------------------------
+      # 8. 失敗時に Issue を作成
       # -------------------------------------------------------
       - name: Create issue on failure
         id: create-issue
@@ -85,22 +168,19 @@ jobs:
           GH_TOKEN: ${{ secrets.REPO_FG_TOKEN }}
         run: |
           # 同じタイトルの Open Issue が既にあればスキップ
-          EXISTING=$(gh issue list --state open --search "Copilot SDK Healthcheck 失敗" --json number --jq 'length')
+          EXISTING=$(gh issue list --state open --search "E2E Healthcheck 失敗" --json number --jq 'length')
           if [ "$EXISTING" -gt 0 ]; then
             echo "⏭️ 既に Open の Issue があるためスキップ"
             exit 0
           fi
 
-          TITLE="🚨 Copilot SDK Healthcheck 失敗 ($(TZ=Asia/Tokyo date '+%Y-%m-%d'))"
-          printf '## ヘルスチェック失敗\n\n**Run:** %s/%s/actions/runs/%s\n\n### 確認事項\n- [ ] Fine-grained PAT（`COPILOT_FG_TOKEN`）の有効期限\n- [ ] `@github/copilot-sdk` の互換性（`vscode-jsonrpc` 問題など）\n- [ ] Copilot サービスの障害情報: https://www.githubstatus.com/\n\n### やること\nActions の Run ログを確認し、原因を特定して修正してください。\nESM loader の問題であれば `src/esm-loader.mjs` を更新してください。\n' \
-            "${{ github.server_url }}" "${{ github.repository }}" "${{ github.run_id }}" > /tmp/issue_body.md
-
+          TITLE="🚨 Copilot E2E Healthcheck 失敗 ($(TZ=Asia/Tokyo date '+%Y-%m-%d'))"
           ISSUE_URL=$(gh issue create --title "$TITLE" --body-file /tmp/issue_body.md --label "bug")
           echo "📋 Issue created: $ISSUE_URL"
           echo "issue-number=$(echo "$ISSUE_URL" | grep -oE '[0-9]+$')" >> "$GITHUB_OUTPUT"
 
       # -------------------------------------------------------
-      # 6. Copilot Coding Agent を Issue にアサイン（REST API 公式手順）
+      # 9. Copilot Coding Agent を Issue にアサイン（REST API 公式手順）
       # -------------------------------------------------------
       - name: Assign Copilot to issue
         if: failure() && steps.create-issue.outputs.issue-number
