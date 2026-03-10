@@ -103,7 +103,7 @@ jobs:
       - name: Install Copilot CLI and SDK
         run: |
           npm install -g @github/copilot
-          npm install @github/copilot-sdk
+          npm install
 
       # -------------------------------------------------------
       # 4. インストール確認
@@ -151,7 +151,7 @@ jobs:
           SUFFIX="${SUFFIX} これはSDK非対話実行です。アウトラインの確認・承認ステップは不要です。承認済みとして直接ファイルを生成してください。"
           export COPILOT_PROMPT="${COPILOT_PROMPT_BASE}${SUFFIX}"
           echo "📝 Prompt: $COPILOT_PROMPT"
-          node src/copilot-sdk-runner.mjs
+          node --import ./src/register-loader.mjs src/copilot-sdk-runner.mjs
 
       # -------------------------------------------------------
       # 6. 成果物の確認

@@ -1,0 +1,8 @@
+{
+  "name": "ghcpskills",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@github/copilot-sdk": "latest"
+  }
+}
