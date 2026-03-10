@@ -73,6 +73,7 @@ on:
         options:
           - github-ui
           - webapp
+          - healthcheck
 
 permissions:
   contents: read

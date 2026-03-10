@@ -1,15 +1,13 @@
 # =============================================================
-# Copilot E2E ヘルスチェック — PPTX 生成まで毎日検証
+# Copilot E2E ヘルスチェック — copilot-poc.yml を呼び出して検証
 # =============================================================
-# 1日1回、SDK → SVG 生成 → svg2pptx.py 変換 → PPTX 出力の
-# エンドツーエンドパイプラインを実行し、どこかで失敗したら
-# エラーログ付きの Issue を自動作成して Copilot Coding Agent にアサインする。
+# 1日1回 copilot-poc.yml（本番ワークフロー）を実行し、
+# 失敗したらエラーログ付き Issue を作成して Copilot Coding Agent にアサインする。
 #
 # 必要な Secrets:
-#   COPILOT_FG_TOKEN — SDK 実行用 PAT（Public repos / copilot requests: read）
-#   REPO_FG_TOKEN    — Issue 作成 + Copilot アサイン用 PAT
-#                     （特定リポジトリ / metadata:r, actions:rw, contents:rw,
-#                       issues:rw, pull_requests:rw）
+#   REPO_FG_TOKEN — workflow_dispatch トリガー + Issue 作成 + Copilot アサイン用 PAT
+#                  （特定リポジトリ / metadata:r, actions:rw, contents:rw,
+#                    issues:rw, pull_requests:rw）
 # =============================================================
 
 name: Copilot E2E Healthcheck
@@ -33,126 +31,111 @@ permissions:
 jobs:
   healthcheck:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
 
     steps:
       # -------------------------------------------------------
-      # 1. チェックアウト
+      # 1. チェックアウト（gh CLI 用）
       # -------------------------------------------------------
       - name: Checkout repository
         uses: actions/checkout@v5
 
       # -------------------------------------------------------
-      # 2. Node.js セットアップ
+      # 2. copilot-poc.yml をトリガーして完了を待つ
       # -------------------------------------------------------
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-
-      # -------------------------------------------------------
-      # 3. Python セットアップ
-      # -------------------------------------------------------
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      # -------------------------------------------------------
-      # 4. 依存パッケージインストール（Node + Python）
-      # -------------------------------------------------------
-      - name: Install dependencies
-        run: |
-          npm install -g @github/copilot
-          npm install
-          pip install -r src/requirements.txt
-
-      # -------------------------------------------------------
-      # 5. E2E ヘルスチェック実行（SDK → SVG → PPTX）
-      # -------------------------------------------------------
-      - name: Run E2E healthcheck
-        id: healthcheck
+      - name: Trigger copilot-poc workflow
+        id: trigger
         env:
-          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_FG_TOKEN }}
-          COPILOT_MODEL: claude-opus-4.6
-          COPILOT_MAX_RETRIES: "2"
-          COPILOT_TIMEOUT_MS: "600000"
+          GH_TOKEN: ${{ secrets.REPO_FG_TOKEN }}
           TZ: Asia/Tokyo
         run: |
           if [ "${{ inputs.simulate_failure }}" = "true" ]; then
             echo "🧪 テスト失敗モード: 意図的にエラーを発生させます"
-            exit 1
+            echo "poc-failed=true" >> "$GITHUB_OUTPUT"
+            echo "run-id=" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
-          export COPILOT_PROMPT="Azure Monitor の概要がわかるワンページャーのPPTX資料を作成してください。 これはSDK非対話実行です。アウトラインの確認・承認ステップは不要です。承認済みとして直接ファイルを生成してください。"
-          echo "📝 Prompt: $COPILOT_PROMPT"
-          node --import ./src/register-loader.mjs src/copilot-sdk-runner.mjs 2>&1 | tee /tmp/healthcheck.log
 
-      # -------------------------------------------------------
-      # 6. PPTX 生成を検証
-      # -------------------------------------------------------
-      - name: Verify PPTX output
-        id: verify
-        if: success()
-        run: |
-          echo "📂 output/ の中身:"
-          find output/ -type f 2>/dev/null || echo "(ファイルなし)"
+          # トリガー前のタイムスタンプ（run 特定用）
+          BEFORE=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          sleep 1
 
-          PPTX_COUNT=$(find output/ -name "*.pptx" 2>/dev/null | wc -l)
-          SVG_COUNT=$(find output/ -name "*.svg" 2>/dev/null | wc -l)
-          echo "📊 SVG: ${SVG_COUNT} 件, PPTX: ${PPTX_COUNT} 件"
+          echo "🚀 copilot-poc.yml をトリガー中..."
+          gh workflow run copilot-poc.yml \
+            -f prompt="Azure Monitor の概要がわかるワンページャーのPPTX資料を作成してください。" \
+            -f output_format="PPTX" \
+            -f model="claude-opus-4.6" \
+            -f source="healthcheck"
 
-          if [ "$PPTX_COUNT" -eq 0 ]; then
-            echo "❌ PPTX ファイルが生成されていません"
-            exit 1
+          # run が登録されるのを待つ
+          echo "⏳ ワークフロー run の登録を待機中..."
+          for i in $(seq 1 12); do
+            sleep 10
+            RUN_ID=$(gh run list --workflow=copilot-poc.yml --created=">$BEFORE" --limit=1 --json databaseId --jq '.[0].databaseId')
+            if [ -n "$RUN_ID" ] && [ "$RUN_ID" != "null" ]; then
+              echo "✅ Run ID: $RUN_ID"
+              break
+            fi
+            echo "  待機中... ($i/12)"
+          done
+
+          if [ -z "$RUN_ID" ] || [ "$RUN_ID" = "null" ]; then
+            echo "❌ ワークフロー run が見つかりません"
+            echo "poc-failed=true" >> "$GITHUB_OUTPUT"
+            echo "run-id=" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
-          echo "✅ E2E ヘルスチェック成功（PPTX ${PPTX_COUNT} 件生成）"
+
+          echo "run-id=$RUN_ID" >> "$GITHUB_OUTPUT"
+
+          echo "⏳ copilot-poc.yml の完了を待機中..."
+          if gh run watch "$RUN_ID" --exit-status; then
+            echo "✅ copilot-poc.yml 成功"
+            echo "poc-failed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "❌ copilot-poc.yml 失敗"
+            echo "poc-failed=true" >> "$GITHUB_OUTPUT"
+          fi
 
       # -------------------------------------------------------
-      # 7. 失敗時にエラーログを収集
+      # 3. 失敗時にエラーログを収集
       # -------------------------------------------------------
       - name: Collect error logs
         id: collect-logs
-        if: failure()
+        if: steps.trigger.outputs.poc-failed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.REPO_FG_TOKEN }}
         run: |
+          RUN_ID="${{ steps.trigger.outputs.run-id }}"
           {
             echo "## E2E ヘルスチェック失敗"
             echo ""
-            echo "**Run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-            echo ""
-            echo "### エラーログ（末尾 80 行）"
-            echo ""
-            echo '```'
-            if [ -f /tmp/healthcheck.log ]; then
-              tail -80 /tmp/healthcheck.log
+            if [ -n "$RUN_ID" ]; then
+              echo "**Failed Run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${RUN_ID}"
+              echo ""
+              echo "### エラーログ（末尾 80 行）"
+              echo ""
+              echo '```'
+              gh run view "$RUN_ID" --log-failed 2>/dev/null | tail -80 || echo "(ログ取得失敗)"
+              echo '```'
             else
-              echo "(ログファイルなし — セットアップ段階で失敗した可能性)"
+              echo "**Healthcheck Run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+              echo ""
+              echo "copilot-poc.yml のトリガーまたは run 検出に失敗しました。"
             fi
-            echo '```'
-            echo ""
-            echo "### ワークスペース状態"
-            echo ""
-            echo '```'
-            echo "--- output/ ---"
-            find output/ -type f 2>/dev/null || echo "(output/ ディレクトリなし)"
-            echo ""
-            echo "--- git status ---"
-            git status --short
-            echo '```'
             echo ""
             echo "### 対応指示"
             echo ""
             echo "上記のエラーログを分析し、原因を特定して修正してください。"
-            echo ""
-            echo "修正後、\`copilot-healthcheck.yml\` を手動実行（Actions → Run workflow）して動作確認してください。"
           } > /tmp/issue_body.md
           echo "📋 Issue 本文を生成しました"
 
       # -------------------------------------------------------
-      # 8. 失敗時に Issue を作成
+      # 4. 失敗時に Issue を作成
       # -------------------------------------------------------
       - name: Create issue on failure
         id: create-issue
-        if: failure()
+        if: steps.trigger.outputs.poc-failed == 'true'
         env:
           GH_TOKEN: ${{ secrets.REPO_FG_TOKEN }}
         run: |
@@ -169,10 +152,10 @@ jobs:
           echo "issue-number=$(echo "$ISSUE_URL" | grep -oE '[0-9]+$')" >> "$GITHUB_OUTPUT"
 
       # -------------------------------------------------------
-      # 9. Copilot Coding Agent を Issue にアサイン（REST API 公式手順）
+      # 5. Copilot Coding Agent を Issue にアサイン
       # -------------------------------------------------------
       - name: Assign Copilot to issue
-        if: failure() && steps.create-issue.outputs.issue-number
+        if: steps.create-issue.outputs.issue-number
         continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.REPO_FG_TOKEN }}
