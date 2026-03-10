@@ -74,20 +74,17 @@ jobs:
         id: healthcheck
         env:
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_FG_TOKEN }}
-          COPILOT_PROMPT: >-
-            Azure Monitor の概要がわかるワンページャーのPPTX資料を作成してください。
-            output/slides/healthcheck/ に SVG ファイル（960x540）を 1 枚出力し、
-            その後 python src/svg2pptx.py output/slides/healthcheck/ を実行して
-            PPTX に変換してください。
-            これはSDK非対話実行です。アウトラインの確認・承認ステップは不要です。承認済みとして直接ファイルを生成してください。
           COPILOT_MODEL: claude-opus-4.6
           COPILOT_MAX_RETRIES: "2"
           COPILOT_TIMEOUT_MS: "600000"
+          TZ: Asia/Tokyo
         run: |
           if [ "${{ inputs.simulate_failure }}" = "true" ]; then
             echo "🧪 テスト失敗モード: 意図的にエラーを発生させます"
             exit 1
           fi
+          export COPILOT_PROMPT="Azure Monitor の概要がわかるワンページャーのPPTX資料を作成してください。 これはSDK非対話実行です。アウトラインの確認・承認ステップは不要です。承認済みとして直接ファイルを生成してください。"
+          echo "📝 Prompt: $COPILOT_PROMPT"
           node --import ./src/register-loader.mjs src/copilot-sdk-runner.mjs 2>&1 | tee /tmp/healthcheck.log
 
       # -------------------------------------------------------
