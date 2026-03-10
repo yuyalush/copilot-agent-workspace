@@ -100,11 +100,11 @@ jobs:
         if: failure() && steps.create-issue.outputs.issue-number
         continue-on-error: true
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.COPILOT_FG_TOKEN }}
         run: |
           ISSUE_NUM="${{ steps.create-issue.outputs.issue-number }}"
           echo "🤖 Copilot を Issue #$ISSUE_NUM にアサイン中..."
           gh api "repos/${{ github.repository }}/copilot/tasks" \
             -X POST \
-            -f "issue_number=$ISSUE_NUM" \
+            -F "issue_number=$ISSUE_NUM" \
             || echo "⚠️ Copilot アサイン失敗（手動でアサインしてください）"
