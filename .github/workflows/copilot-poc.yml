@@ -82,6 +82,8 @@ jobs:
   copilot-run:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      AZURE_STORAGE_ACCOUNT_NAME: ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}
 
     steps:
       # -------------------------------------------------------
@@ -231,7 +233,7 @@ jobs:
       # 9. Azure OIDC ログイン（Blob Storage アップロード用）
       # -------------------------------------------------------
       - name: Azure Login (OIDC)
-        if: always() && secrets.AZURE_CLIENT_ID != ''
+        if: always() && env.AZURE_STORAGE_ACCOUNT_NAME != ''
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
@@ -242,9 +244,7 @@ jobs:
       # 10. Blob Storage にアップロード（Web App 用）
       # -------------------------------------------------------
       - name: Upload to Blob Storage
-        if: always()
-        env:
-          AZURE_STORAGE_ACCOUNT_NAME: ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}
+        if: always() && env.AZURE_STORAGE_ACCOUNT_NAME != ''
         run: |
           if [ -z "$AZURE_STORAGE_ACCOUNT_NAME" ]; then
             echo "⚠️ AZURE_STORAGE_ACCOUNT_NAME not set — skipping blob upload"
