@@ -3,6 +3,12 @@
 # =============================================================
 # 1日1回、Copilot SDK が正常に動作するかを軽量プロンプトで確認。
 # 失敗した場合は GitHub Issue を自動作成して通知する。
+#
+# 必要な Secrets:
+#   COPILOT_FG_TOKEN — SDK 実行用 PAT（Public repos / copilot requests: read）
+#   REPO_FG_TOKEN    — Issue 作成 + Copilot アサイン用 PAT
+#                     （特定リポジトリ / metadata:r, actions:rw, contents:rw,
+#                       issues:rw, pull_requests:rw）
 # =============================================================
 
 name: Copilot SDK Healthcheck
@@ -76,7 +82,7 @@ jobs:
         id: create-issue
         if: failure()
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.REPO_FG_TOKEN }}
         run: |
           # 同じタイトルの Open Issue が既にあればスキップ
           EXISTING=$(gh issue list --state open --search "Copilot SDK Healthcheck 失敗" --json number --jq 'length')
@@ -100,7 +106,7 @@ jobs:
         if: failure() && steps.create-issue.outputs.issue-number
         continue-on-error: true
         env:
-          GH_TOKEN: ${{ secrets.COPILOT_FG_TOKEN }}
+          GH_TOKEN: ${{ secrets.REPO_FG_TOKEN }}
         run: |
           ISSUE_NUM="${{ steps.create-issue.outputs.issue-number }}"
           echo "🤖 Copilot を Issue #$ISSUE_NUM にアサイン中..."
