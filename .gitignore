@@ -42,6 +42,11 @@ Thumbs.db
 desktop.ini
 $RECYCLE.BIN/
 
+# ===== ローカル実行用 =====
+# 環境変数（トークン等の機密情報を含む）
+src/.env.local
+src/run-local.ps1
+
 # ===== エディタ =====
 *.swp
 *.swo

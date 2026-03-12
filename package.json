@@ -1,0 +1,27 @@
+{
+  "name": "copilot-agent-workspace",
+  "version": "1.0.0",
+  "description": "> **🇯🇵 [日本語版はこちら / Japanese Version](#日本語版--japanese-version)**",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "node -e \"const fs=require('fs');const f='node_modules/@github/copilot-sdk/dist/session.js';if(fs.existsSync(f)){fs.writeFileSync(f,fs.readFileSync(f,'utf8').replace(/from \\\"vscode-jsonrpc\\/node\\\"/g,'from \\\"vscode-jsonrpc/node.js\\\"'))}\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yuyalush/copilot-agent-workspace.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yuyalush/copilot-agent-workspace/issues"
+  },
+  "homepage": "https://github.com/yuyalush/copilot-agent-workspace#readme",
+  "dependencies": {
+    "@github/copilot-sdk": "^0.1.32"
+  }
+}
